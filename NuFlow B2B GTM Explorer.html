@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NuFlow B2B GTM Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout concept: a project spec binder. Sticky tab strip, one view at a time, monospace for every figure, evidence tags on every number, a slide-notes button on every section. */
+:root{
+  --bg:#edf0f3; --surface:#fbfcfd; --surface2:#f1f4f6; --ink:#0d1b26; --ink2:#46535e; --muted:#6f7c86; --line:#d5dce2;
+  --accent:#0b4f6c; --accent-ink:#ffffff;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#8a5cd6; --neutral:#9aa6af;
+  --f1:#86b6ef; --f2:#2a78d6; --f3:#104281;
+  --good:#006300; --t-src:#0b4f6c; --t-der:#5b4bb7; --t-ass:#9a5b00; --t-unv:#a13030;
+  --warm:#b45309; --warm-bg:#fff4e6;
+  --font-d:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-b:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --font-m:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1217; --surface:#131b22; --surface2:#19232b; --ink:#e7edf1; --ink2:#b4c0c8; --muted:#8895a0; --line:#27333c;
+  --accent:#7cc8e8; --accent-ink:#06222e;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#9b78e8; --neutral:#5b6872;
+  --f1:#86b6ef; --f2:#3987e5; --f3:#1c5cab;
+  --good:#0ca30c; --t-src:#7cc8e8; --t-der:#a99cf2; --t-ass:#e0a23d; --t-unv:#ef8a8a;
+  --warm:#f0a35a; --warm-bg:#2a2016; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1140px;margin:0 auto}
+a{color:var(--accent)}
+h1,h2,h3,h4{font-family:var(--font-d);line-height:1.12;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,46px);font-weight:800}
+h2{font-size:clamp(22px,3vw,30px);font-weight:700}
+h3{font-size:17px;font-weight:700}
+h4{font-size:14px;font-weight:700;color:var(--ink2)}
+p{margin:0}
+.mono,.num{font-family:var(--font-m);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--font-m);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+/* nav */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:0 max(16px,env(safe-area-inset-left,0px))}
+.bar-in{max-width:1140px;margin:0 auto;display:flex;align-items:center;gap:16px;padding-block:10px}
+.brand{font-family:var(--font-d);font-weight:800;font-size:17px;white-space:nowrap;display:flex;align-items:center;gap:9px}
+.brand i{width:12px;height:12px;border-radius:50% 50% 50% 0;background:var(--s1);display:inline-block;transform:rotate(-45deg)}
+.brand small{font-family:var(--font-m);font-weight:500;font-size:11px;color:var(--muted);margin-left:2px}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
+nav::-webkit-scrollbar{display:none}
+nav a{padding:7px 11px;border-radius:6px;text-decoration:none;color:var(--ink2);font-size:13.5px;font-weight:500;white-space:nowrap}
+nav a:hover{background:var(--surface2)}
+nav a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.view{padding-top:30px;display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+.g2>*,.g3>*,.g4>*{min-width:0}
+.lead{max-width:64ch;color:var(--ink2);font-size:16.5px}
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.panel.flat{background:transparent;border-style:dashed}
+.panel.warm{background:var(--warm-bg);border-color:var(--warm)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.col,.panel,.tw,.grid>*,.steps>*,.step>*{min-width:0;max-width:100%}
+.sec-h{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.sec-h p{color:var(--ink2);max-width:72ch}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.sec-top .sec-h{margin-bottom:0;flex:1 1 420px}
+/* tags */
+.tag{font-family:var(--font-m);font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;border-radius:4px;padding:0 5px;margin-left:7px;white-space:nowrap;vertical-align:middle}
+.tag.src{color:var(--t-src)} .tag.der{color:var(--t-der)} .tag.ass{color:var(--t-ass)} .tag.unv{color:var(--t-unv)}
+/* big numbers */
+.kpi{display:flex;flex-direction:column;gap:4px;padding:18px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.kpi .v{font-family:var(--font-d);font-weight:800;font-size:clamp(28px,4.2vw,42px);line-height:1}
+.kpi .v small{font-size:.42em;font-weight:600;color:var(--muted);margin-left:4px}
+.kpi .l{font-size:13px;color:var(--ink2)}
+.kpi.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.kpi.dark .l{color:var(--bg);opacity:.78}
+.kpi.sm .v{font-size:clamp(22px,3vw,30px)}
+/* hero */
+.hero{display:grid;gap:18px;padding:6px 0 4px;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:18px 18px;background-position:-6px -6px;border-radius:10px}
+.hero>*{background:transparent}
+.hero h1{max-width:22ch}
+/* slide bar */
+.slide{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-radius:10px;background:var(--surface2);border:1px dashed var(--line)}
+.slide .eyebrow{display:block;margin-bottom:3px}
+.slide b{font-family:var(--font-d);font-size:16px;font-weight:700}
+.btn{font:600 13px var(--font-b);border:1px solid var(--ink);background:transparent;color:var(--ink);padding:7px 13px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface)}
+.btn.ok{border-color:var(--good);color:var(--good)}
+.copybox{grid-column:1/-1}
+.copybox textarea{width:100%;min-height:150px;font:12.5px/1.45 var(--font-m);border:1px solid var(--line);border-radius:7px;padding:10px;background:var(--surface);color:var(--ink);resize:vertical}
+@media (max-width:560px){.slide{grid-template-columns:1fr}}
+/* lists */
+.finds{display:grid;gap:0;counter-reset:f;border-top:1px solid var(--line);padding:0;margin:0}
+.finds li{list-style:none;display:grid;grid-template-columns:34px 1fr;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.finds li::before{counter-increment:f;content:counter(f);font-family:var(--font-m);color:var(--muted);font-size:13px;padding-top:2px}
+.finds b{font-weight:600}
+ul.tight{margin:0;padding-left:18px;color:var(--ink2);font-size:13.5px;display:grid;gap:6px}
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--font-m);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--font-m);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.c{text-align:center}
+/* controls */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--font-b);border:1px solid var(--line);background:var(--surface);color:var(--ink2);padding:6px 11px;border-radius:99px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,150px) 84px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.sl output{font-family:var(--font-m);font-size:12.5px;text-align:right}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+@media (max-width:560px){.sl{grid-template-columns:1fr 84px}.sl input{grid-column:1/-1;order:3}}
+/* partner cards */
+.pc{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.pc.warm{border-left:4px solid var(--warm)}
+.rk{font-family:var(--font-d);font-weight:800;font-size:22px;color:var(--muted);text-align:center;line-height:1}
+.rk small{display:block;font-family:var(--font-m);font-size:10px;font-weight:500;margin-top:4px}
+.pc h3{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pill{font:500 11.5px var(--font-m);padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--ink2);background:var(--surface2);white-space:nowrap}
+.pill.open{color:var(--good);border-color:var(--good)}
+.pill.fixed{color:var(--t-unv);border-color:var(--t-unv)}
+.pill.none{color:var(--t-der);border-color:var(--t-der)}
+.pill.unknown{color:var(--muted)}
+.pill.ref{color:var(--t-ass);border-color:var(--t-ass)}
+.pill.warm{color:var(--warm);border-color:var(--warm);background:var(--warm-bg)}
+.pc dl{margin:10px 0 0;display:grid;grid-template-columns:92px minmax(0,1fr);gap:6px 12px;font-size:13.5px}
+.pc dt{font-family:var(--font-m);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding-top:2px}
+.pc dd{margin:0}
+.score{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.score .bar2{flex:1;height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;max-width:260px;min-width:120px}
+.score .bar2 i{display:block;height:100%;background:var(--s1);border-radius:4px}
+.mini{display:flex;gap:6px;font-family:var(--font-m);font-size:11.5px;color:var(--ink2);flex-wrap:wrap}
+.mini span{border:1px solid var(--line);border-radius:4px;padding:0 6px}
+.plist{display:grid;gap:12px}
+/* svg charts */
+svg text{font-family:var(--font-b);fill:var(--ink2)}
+svg .m{font-family:var(--font-m)}
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--bg);font:12.5px/1.4 var(--font-b);padding:7px 10px;border-radius:6px;max-width:280px;opacity:0;transition:opacity .08s}
+details.tbl summary{cursor:pointer;font-size:13px;color:var(--accent);margin-top:10px}
+.note{font-size:13px;color:var(--ink2);border-left:3px solid var(--line);padding:2px 0 2px 12px}
+.note.warn{border-left-color:var(--t-unv)}
+.note.good{border-left-color:var(--good)}
+.steps{display:grid;gap:12px}
+.step{display:grid;grid-template-columns:100px minmax(0,1fr);gap:16px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.step .when{font-family:var(--font-m);font-size:12px;color:var(--muted)}
+.step .when b{display:block;font-family:var(--font-d);font-size:19px;color:var(--ink);font-weight:800}
+.step ul{margin:8px 0 0;padding-left:18px;color:var(--ink2);font-size:13.5px}
+/* heat grid */
+.heat{display:grid;gap:4px;font-size:12.5px;overflow-x:auto}
+.heat .hc{padding:8px 6px;border-radius:5px;text-align:center;font-family:var(--font-m);font-size:12px}
+.heat .hh{font-family:var(--font-m);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px 4px;text-align:center}
+.heat .hr{font-weight:600;padding:8px 6px;display:flex;align-items:center}
+.h3{background:var(--s1);color:#fff}.h2{background:color-mix(in srgb,var(--s1) 55%,var(--surface));color:var(--ink)}.h1{background:color-mix(in srgb,var(--s1) 22%,var(--surface));color:var(--ink)}.h0{background:var(--surface2);color:var(--muted)}
+/* persona cards */
+.persona{display:grid;gap:6px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.persona h4{color:var(--ink);font-size:15px}
+.persona .q{font-style:italic;color:var(--ink2);font-size:13px}
+.persona ul{margin:0;padding-left:16px;font-size:13px;color:var(--ink2)}
+.pos{font-family:var(--font-d);font-size:clamp(18px,2.4vw,24px);font-weight:700;line-height:1.3;max-width:34ch}
+.badge{display:inline-block;font:600 11px var(--font-m);padding:2px 8px;border-radius:4px;background:var(--ink);color:var(--bg);letter-spacing:.04em}
+@media (max-width:560px){.step{grid-template-columns:1fr;gap:6px}.pc{grid-template-columns:1fr}.rk{text-align:left}.rk small{display:inline;margin-left:6px}.pc dl{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.bar,#tip,.btn{display:none!important}.view[hidden]{display:grid!important}.view{break-before:page}}
+</style>
+</head>
+<body>
+<div class="bar"><div class="bar-in">
+  <div class="brand"><i></i>NuFlow B2B <small>GTM explorer</small></div>
+  <nav aria-label="Sections">
+    <a id="t-answer" href="#answer">Answer</a>
+    <a id="t-market" href="#market">Market</a>
+    <a id="t-channels" href="#channels">Channels</a>
+    <a id="t-birlanu" href="#birlanu">BirlaNu base</a>
+    <a id="t-partners" href="#partners">Partners</a>
+    <a id="t-geography" href="#geography">Geography</a>
+    <a id="t-numbers" href="#numbers">Numbers</a>
+    <a id="t-playbook" href="#playbook">Playbook</a>
+    <a id="t-evidence" href="#evidence">Evidence</a>
+  </nav>
+</div></div>
+
+<main class="wrap">
+
+<!-- ================= ANSWER ================= -->
+<section class="view" id="v-answer">
+  <div class="hero">
+    <span class="eyebrow">NuFlow by BirlaNu · institutional (B2B) market entry · November 2026</span>
+    <h1>Enter through the specification, not the showroom.</h1>
+    <p class="lead">An end-to-end, sourced view of the B2B route for a polymer-hybrid faucet line: how the housing market is built, who buys fittings and through which channel, what BirlaNu already owns, which partners to approach, where, and how big the prize is. Every figure carries a tag: <span class="tag src" style="margin-left:0">sourced</span> <span class="tag der">derived</span> <span class="tag ass">assumed</span> <span class="tag unv">unverified</span>.</p>
+  </div>
+  <div class="slide" data-slide="answer"></div>
+
+  <div class="grid g4">
+    <div class="kpi dark"><span class="eyebrow" style="color:inherit;opacity:.7">TAM · per year</span><div class="v num" id="k-tam">–</div><div class="l">CP-fittings spend in developer-fitted homes (top 7 + Tier 2), branded hotel rooms and partnership affordable housing</div></div>
+    <div class="kpi"><span class="eyebrow">SAM · per year</span><div class="v num" id="k-sam">–</div><div class="l">The part a NuFlow kit can be specified into: ₹40 L to 2.5 Cr homes with open specs, economy to upper-midscale hotels</div></div>
+    <div class="kpi"><span class="eyebrow">SOM · FY30 (year 3)</span><div class="v num" id="k-som">–</div><div class="l">Project revenue from the GTM plan's kit model: developer phases, hotel rooms and Atelier capsules</div></div>
+    <div class="kpi"><span class="eyebrow">Open specs in sample</span><div class="v num" id="k-open">–</div><div class="l">Of 27 developer specification sheets reviewed, those saying "or equivalent" or naming no brand</div></div>
+  </div>
+
+  <div>
+    <div class="sec-h"><h2>What the research says</h2></div>
+    <ol class="finds" id="finds"></ol>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel">
+      <div class="sec-h"><h3>How this connects to the faucet case</h3></div>
+      <div class="tw"><table>
+        <tr><th>Stage of the case</th><th>What it established</th><th>What this explorer adds</th></tr>
+        <tr><td><b>Industry research</b></td><td>Jaquar, Cera, Hindware, Hansgrohe business models; brass cost pressure</td><td>How incumbents sell to projects (≈40% of organised sales), their networks by region, and the open "or equivalent" clause in specs</td></tr>
+        <tr><td><b>NuFlow line</b></td><td>CORE, SAFE, HUE, SENSE, ATELIER on one module platform</td><td>Which tier fits which B2B buyer; kits as the unit of sale; polymer-acceptance evidence by segment</td></tr>
+        <tr><td><b>Business model</b></td><td>Mid-premium pricing, 54–61% gross margin, 18% EBITDA from launch</td><td>Project channel economics, the sized pool behind the Year 1 order book, and the gates (G0–G2)</td></tr>
+        <tr><td><b>Reach (dealer) plan</b></td><td>One price, clusters of 40 outlets, QR-verified installs</td><td>Why the self-build 60%+ of demand is reached through dealers and plumbers, and projects feed it</td></tr>
+        <tr><td><b>GTM phasing</b></td><td>Telangana first, then South, then West and North</td><td>Partner lists, warm accounts via BirlaNu, and the city ranking behind each phase</td></tr>
+      </table></div>
+    </div>
+    <div class="panel">
+      <div class="sec-h"><h3>What moved from "unverified" to evidence</h3></div>
+      <ul class="tight">
+        <li><b>Supplier tie-ups.</b> Earlier: unknown for every partner. Now: 27 developer specs and 11 hotel references read. Most developer specs are open ("Jaquar or equivalent"); hotel references cluster on Jaquar/Artize, TOTO, GROHE and Duravit. See Partners.</li>
+        <li><b>Polymer in projects.</b> No developer or hotel spec names PTMT. Incumbents place polymer at the value end (Cera Polipluz, Truflo by Hindware, Prince Duratap). This is why NuFlow's finish-led, mid-premium hybrid is the right B2B product, and why the spec pack must carry IS marks and a brass-equivalent warranty.</li>
+        <li><b>Fittings spend per bathroom.</b> Earlier: one assumption. Now anchored to published retail tiers (economy ₹9–15k, standard ₹22–35k, luxury ₹55k+) and the plan's project kits (₹4,268 to ₹11,445 realised).</li>
+        <li><b>Developer-fitted share.</b> Apartments ship with CP fittings as standard; villas and plots do not. Raised from 60% to 85% of launches, tagged assumed.</li>
+        <li><b>BirlaNu's base.</b> 16 named clients, 5,937 dealers, 90.7% of sales through them, 64,921 plumber and contractor meets in FY26. Warm routes to DLF, M3M, Mahindra Lifespaces, Casagrand, Raheja, Appaswamy and four EPC contractors.</li>
+      </ul>
+      <p class="note warn" style="margin-top:10px">Still open: whether luxury hotel brand standards allow polymer (no standard found either way), the exact project discount depth (trade lore says 40–60% off MRP), and the opening status of Radisson's two Hyderabad hotels.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MARKET ================= -->
+<section class="view" id="v-market" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">Market structure · the seven questions from the case directions</span>
+    <h2>Most of India builds its own house. Developers build the specified bathroom.</h2>
+    <p>The case asked how many customers come through new construction, flat purchase and renovation, how that differs by tier and by urban versus rural, how many projects exist and how many are premium. This is the answer, with the "so what" for an institutional entry.</p>
+  </div></div>
+  <div class="slide" data-slide="market"></div>
+
+  <div class="grid g3">
+    <div class="kpi"><span class="eyebrow">Q1 · live in independent houses</span><div class="v num">78<small>%</small></div><div class="l">All-India households, derived from NSS 76th round: 89% rural, 56% urban <span class="tag der">derived</span></div></div>
+    <div class="kpi"><span class="eyebrow">Q2 · developer launches, top 7 cities</span><div class="v num">4.19<small>lakh</small></div><div class="l">2025, Anarock. 9M 2026: 3.47 lakh, up 11% on the 2025 run-rate <span class="tag src">sourced</span></div></div>
+    <div class="kpi"><span class="eyebrow">Q7 · replacement share of bathware</span><div class="v num">20–25<small>%</small></div><div class="l">Faucets at the upper end; 75–80% of demand is new construction, Anand Rathi, Mar 2026 <span class="tag src">sourced</span></div></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Q1–Q3 · Where new homes come from each year</h3>
+      <p style="font-size:13px;color:var(--ink2);margin:6px 0 10px">Annual flow of new dwellings by route. Developers are a small share of houses and a large share of specified, branded bathrooms.</p>
+      <svg class="chart" id="flowchart" viewBox="0 0 560 230" role="img" aria-label="Annual new dwellings by route"></svg>
+      <div class="tw" style="margin-top:10px"><table>
+        <tr><th>Route</th><th class="n">Units / yr</th><th>Who picks the fittings</th><th>Channel</th></tr>
+        <tr><td>PMAY-G rural self-built</td><td class="n">35.5 lakh</td><td>Household and mason</td><td>Hardware store, plumber</td></tr>
+        <tr><td>Urban owner-builders (est.)</td><td class="n">6–10 lakh</td><td>Household, contractor, plumber</td><td>Dealer, plumber, Reach model</td></tr>
+        <tr><td>PMAY-U partnership housing (AHP/ISSR)</td><td class="n">≈1.8 lakh</td><td>State agency or developer; ISI-marked spec</td><td>Project tender</td></tr>
+        <tr><td>Developer launches, top 7 cities</td><td class="n">4.19 lakh</td><td>Developer procurement, architect spec</td><td>Project (this explorer)</td></tr>
+        <tr><td>Developer launches, 15 Tier 2 cities</td><td class="n">1.36 lakh</td><td>Developer procurement, local architect</td><td>Project, regional</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">PMAY-U partnership units are the cumulative 18 lakh AHP and ISSR sanctions spread over ten years. Owner-builder range is an analyst estimate from building-permission data (Urbanomics).</p>
+    </div>
+    <div class="col" style="display:grid;gap:16px;align-content:start">
+      <div class="panel">
+        <h3>Q3 · Urban versus rural</h3>
+        <div class="tw" style="margin-top:8px"><table>
+          <tr><th>Measure</th><th class="n">Rural</th><th class="n">Urban</th></tr>
+          <tr><td>Households in independent houses</td><td class="n">89.0%</td><td class="n">56.4%</td></tr>
+          <tr><td>Households in flats or other</td><td class="n">11.0%</td><td class="n">43.6%</td></tr>
+          <tr><td>Pucca structures</td><td class="n">76.7%</td><td class="n">96.0%</td></tr>
+          <tr><td>Own their dwelling</td><td class="n">96.0%</td><td class="n">63.8%</td></tr>
+          <tr><td>Share of cement demand (FY25)</td><td class="n">32–34%</td><td class="n">22–24%</td></tr>
+        </table></div>
+        <p class="note" style="margin-top:8px">NSS 76th round (2018) and CRISIL. NITI Aayog puts the urban housing shortage at 5–7 crore units (Jan 2026). The flat-dwelling share in cities is the ceiling for developer-specified bathrooms.</p>
+      </div>
+      <div class="panel">
+        <h3>Q7 · New build, self-build and replacement</h3>
+        <svg class="chart" id="entrychart" viewBox="0 0 560 120" role="img" aria-label="Where faucet demand enters"></svg>
+        <p class="note" style="margin-top:8px">Bathware ₹33,100 Cr (FY25), faucets ₹20,190 Cr, organised 60%. Replacement is 20–25% of bathware and higher for faucets. Home improvement overall is a ₹3 lakh Cr market with a 10–12 year renovation cycle (Alvarez &amp; Marsal). Replacement is retail and plumber territory; new build is where projects decide.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Q4 · Growth by tier</h3>
+      <svg class="chart" id="tierchart" viewBox="0 0 560 170" role="img" aria-label="Launches by tier"></svg>
+      <div class="tw" style="margin-top:10px"><table>
+        <tr><th>Tier 2 signal (PropEquity, 2025)</th><th class="n">Change</th></tr>
+        <tr><td>Mohali launches</td><td class="n">+108%</td></tr>
+        <tr><td>Bhopal launches</td><td class="n">+66%</td></tr>
+        <tr><td>Lucknow sales (Q1 2025: +25%)</td><td class="n">+6%</td></tr>
+        <tr><td>Coimbatore sales, Q1 2025</td><td class="n">+21%</td></tr>
+        <tr><td>Ahmedabad: 51,148 units, 33% of all Tier 2 sales</td><td class="n">share</td></tr>
+        <tr><td>Bhubaneswar launches</td><td class="n">−57%</td></tr>
+        <tr><td>Tier 2 homes above ₹1 Cr: 28% of sales (23% in 2024)</td><td class="n">+5 pts</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">Tier 2 is a third of top-7 volume but behaves differently: Gujarat's four cities are 63% of it, premiumisation is slower, and FY26 land deals moved to Amritsar, Vadodara, Nagpur, Panipat, Mysore, Raipur and Coimbatore. In 2026 Hyderabad is the fastest-growing Tier 1 launch market (9M launches +6%, Q3 +15% sales).</p>
+    </div>
+    <div class="panel col">
+      <h3>Q5 · How many projects</h3>
+      <svg class="chart" id="rerachart" viewBox="0 0 560 200" role="img" aria-label="RERA registered projects by state"></svg>
+      <div class="tw" style="margin-top:10px"><table>
+        <tr><th>Measure</th><th class="n">Figure</th><th>Source</th></tr>
+        <tr><td>Projects registered under all RERAs (May 2025)</td><td class="n">1,44,617</td><td>MoHUA</td></tr>
+        <tr><td>Units in top-10 RERA states (8 years)</td><td class="n">97.1 lakh</td><td>PropEquity</td></tr>
+        <tr><td>Average units per registered project</td><td class="n">81</td><td>PropEquity (UP 184, Gujarat 116)</td></tr>
+        <tr><td>MahaRERA approvals, FY26</td><td class="n">10,379</td><td>MahaRERA</td></tr>
+        <tr><td>New top-7 projects per year</td><td class="n">3,600–5,200</td><td>Derived: 4.19 lakh ÷ 81–116 <span class="tag der">derived</span></td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">Year 1 of the plan needs 7 developer phases. That is under 0.2% of the projects launched in the top 7 cities each year.</p>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Q6 · How much of it is premium and upper-middle</h3>
+      <svg class="chart" id="bandchart" viewBox="0 0 560 190" role="img" aria-label="Launch mix by price band, 2026 quarters"></svg>
+      <div class="legend" id="bandleg"></div>
+      <p class="note" style="margin-top:8px">Anarock launch mix, top 7 cities. Knight Frank: homes above ₹1 Cr were 50% of 2025 sales and 55% of 9M 2026 sales (37% below ₹50 L in 2022, 21% in 2025). The ₹80 L to 2.5 Cr bands, 58% of Q3 2026 launches, are the natural home for HUE and SAFE kits.</p>
+    </div>
+    <div class="panel col">
+      <h3>So what for the institutional entry</h3>
+      <ol class="finds">
+        <li><div><b>Two markets, two motions.</b> Self-build and replacement (60%+ of faucet demand) are reached through dealers and plumbers: that is the Reach model. Organised projects (≈40% of organised faucet sales, ₹4,800 Cr) are reached through specification: that is this plan. Projects feed dealers with references; dealers service what projects install.</div></li>
+        <li><div><b>The bathroom count is set by the price band.</b> Using 1.5 bathrooms below ₹40 L, 2 at ₹40–80 L, 2.5 at ₹80 L–1.5 Cr and 3 above, the Q3 2026 launch mix gives 2.4 bathrooms per home. Premiumisation adds bathrooms faster than it adds homes.</div></li>
+        <li><div><b>Affordable is open but ISI-led.</b> Signature Global's HRERA specs say only "ISI marked". PMAY partnership housing and affordable towers are where a certified polymer CORE kit competes on price without a brand fight.</div></li>
+        <li><div><b>Tier 2 waits for the dealer network.</b> Projects there average 81 units and sit with local architects. They are a Year 3+ project market, reached first through BirlaNu's dealers and the plumber scheme.</div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHANNELS ================= -->
+<section class="view" id="v-channels" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">Channel structure by geography</span>
+    <h2>Five channels, one decides the spec and one does the install.</h2>
+    <p>How fittings move from factory to bathroom in India, with network sizes, who decides, how margin is structured and where each brand is strong. The last column says what NuFlow should use each channel for.</p>
+  </div></div>
+  <div class="slide" data-slide="channels"></div>
+
+  <div class="tw"><table id="chtab"></table></div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Network size: who already has the counter</h3>
+      <p style="font-size:13px;color:var(--ink2);margin:6px 0 10px">Dealer, distributor and retail-touchpoint counts as published. Scopes differ: Astral counts every category, Cera counts dealers and distributors, BirlaNu counts dealers receiving sales.</p>
+      <svg class="chart" id="netchart" viewBox="0 0 560 300" role="img" aria-label="Dealer network sizes"></svg>
+      <p class="note" style="margin-top:8px">Pipe companies hold the largest networks and already sell polymer taps through them (Astral, Prince Duratap, Supreme Aquatic, Truflo). BirlaNu's 5,937 dealers put it in the same family, which is the Reach model's starting point and the project plan's pull-through.</p>
+    </div>
+    <div class="panel col">
+      <h3>Regional strength of incumbents</h3>
+      <p style="font-size:13px;color:var(--ink2);margin:6px 0 10px">From broker dealer checks (PL Capital, Jun 2026; BOBCAPS, Oct 2024) and Cera's regional revenue split. 3 = leads, 2 = strong, 1 = present, 0 = weak.</p>
+      <div class="heat" id="heat"></div>
+      <p class="note" style="margin-top:10px">Telangana and Andhra Pradesh are the gap: Cera is weak there, Parryware is losing share outside Tamil Nadu, and Jaquar leads on architect acceptance in the North more than the South. Mordor puts the South at 34% of faucet revenue and the fastest-growing region.</p>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="panel">
+      <h3>Experience centres</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Brand</th><th>Footprint</th></tr>
+        <tr><td>Jaquar</td><td>21–23 Orientation Centres; 40+ Jaquar World showrooms; Indore flagship 58,000 sq ft</td></tr>
+        <tr><td>Kohler</td><td>KEC Delhi, Mumbai, Bengaluru; Studio Kohler Hyderabad (2024)</td></tr>
+        <tr><td>Cera</td><td>13 Style Studios + mobile studio; 318 Style Hubs; 285 Galleries; 1,613 Style Centres</td></tr>
+        <tr><td>Hindware</td><td>Lacasa rebranded Experience Centres; Delhi open, Hyderabad and Bengaluru next, 10–12 target</td></tr>
+        <tr><td>GROHE</td><td>~400 stores and centres in 80–90 cities; 14,000 sq ft Bengaluru centre</td></tr>
+        <tr><td>Roca</td><td>Display studios in Lucknow, Kolkata, Bengaluru, Hyderabad; Delhi gallery</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">The plan's Hyderabad centre in Year 2 lands in a city where Kohler, Roca and Hindware have all opened since 2024: specifiers are already being courted there.</p>
+    </div>
+    <div class="panel">
+      <h3>Plumber and fitter programmes</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Programme</th><th class="n">Enrolled</th></tr>
+        <tr><td>Prince Udaan (plumbers, retailers, wholesalers)</td><td class="n">1,50,000+</td></tr>
+        <tr><td>Parryware Bandhan (≈80,000 active)</td><td class="n">1,00,000</td></tr>
+        <tr><td>Hindware plumber platform</td><td class="n">1,00,000+</td></tr>
+        <tr><td>Cera plumber loyalty</td><td class="n">52,500+</td></tr>
+        <tr><td>BirlaNu influencer meets, FY26 (pipes and putty)</td><td class="n">64,921</td></tr>
+        <tr><td>Ashirvad Experts Club</td><td class="n">QR + DBT cash</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">India had about 3.5 lakh skilled plumbers in 2018, one per 3,800 people, 90% untrained. Astral and Finolex call the plumber the biggest real-world influencer. The QR-verified install reward in the Reach plan is the right mechanism; it needs DBT cash and accident cover to match the pipe brands.</p>
+    </div>
+    <div class="panel">
+      <h3>B2B procurement platforms</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Platform</th><th>Role</th></tr>
+        <tr><td>Infra.Market (IVAS)</td><td>Tiles and bath division, 10,000+ touchpoints, 30+ flagships; supplies developers</td></tr>
+        <tr><td>Brick&amp;Bolt</td><td>Bulk supply of Parryware, Jaquar, Hindware, Kohler, GROHE to its homes in Bengaluru, Hyderabad, Chennai, NCR, Pune</td></tr>
+        <tr><td>Arisinfra + House of W</td><td>₹300 Cr a year of sanitaryware fulfilment for Transcon and Wadhwa projects</td></tr>
+        <tr><td>Moglix, OfBusiness</td><td>Sanitary-materials catalogues for contractors</td></tr>
+        <tr><td>MEP contractors</td><td>Execute plumbing packages on large towers (e.g. Sterling &amp; Wilson at Mahagun Mywoods); brand set by developer and architect</td></tr>
+      </table></div>
+      <p class="note" style="margin-top:8px">Platforms aggregate demand but do not set the spec. They are a listing to secure after the first references, not a route to win them.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="sec-h"><h3>Channel role by GTM phase</h3><p>From the mid-premium plan. Each channel has one job and one commercial rule so it cannot undercut the others. Projects open, architects specify, studios and BirlaNu dealers sell the repeat, digital proves and services.</p></div>
+    <div class="tw"><table>
+      <tr><th>Channel</th><th>FY28 (Y1)</th><th>FY29</th><th>FY30</th><th>FY32 (Y5)</th><th>Commercial rule</th></tr>
+      <tr><td><b>Developer projects</b></td><td>7 phases · ₹2.64 Cr · 38%</td><td>12 phases</td><td>18 phases</td><td>32 phases · ₹14.39 Cr</td><td>Price book, 30% off ceiling; 20% advance at PO; milestone billing</td></tr>
+      <tr><td><b>Hotels</b></td><td>6 hotels · ₹0.58 Cr · 8%</td><td>10</td><td>16</td><td>28 · ₹2.97 Cr</td><td>35% off ceiling; longer warranty before a deeper cut</td></tr>
+      <tr><td><b>Atelier projects</b></td><td>–</td><td>–</td><td>3</td><td>9 · ₹1.24 Cr</td><td>25% off; design collaborations; boutique hotels, villas, show flats</td></tr>
+      <tr><td><b>Premium bath studios</b></td><td>80 active · ₹1.96 Cr · 28%</td><td>140</td><td>220</td><td>380 · ₹29.68 Cr</td><td>25% dealer margin + 4% hub; counted only after a reorder</td></tr>
+      <tr><td><b>BirlaNu plumbing dealers</b></td><td>200 active · ₹1.09 Cr · 16%</td><td>350</td><td>520</td><td>850 · ₹10.50 Cr</td><td>22% + 8% distributor; field force on 3% commission</td></tr>
+      <tr><td><b>D2C and experience centres</b></td><td>Brand site · ₹0.61 Cr · 9%</td><td>Hyderabad centre</td><td>Bengaluru, NCR</td><td>Mumbai · ₹9.76 Cr</td><td>Never below dealer street price; 15% platform cost</td></tr>
+    </table></div>
+    <p class="note good" style="margin-top:10px">Projects are 47% of Year 1 revenue and 27% by Year 5. The institutional channel is the launch engine, not the long-run engine. That matches the case direction: institutional first, then retail.</p>
+  </div>
+</section>
+
+<!-- ================= BIRLANU BASE ================= -->
+<section class="view" id="v-birlanu" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">What BirlaNu already owns</span>
+    <h2>The warm route: behind the wall, then on the wall.</h2>
+    <p>BirlaNu sells pipes, panels, roofing and construction chemicals to the same developers, contractors and institutions NuFlow needs. This tab maps the published base, flags what is verified, and turns it into a warm-account list.</p>
+  </div></div>
+  <div class="slide" data-slide="birlanu"></div>
+
+  <div class="grid g4">
+    <div class="kpi sm"><span class="eyebrow">Revenue FY26</span><div class="v num">₹3,730<small>Cr</small></div><div class="l">Consolidated. Standalone ₹2,427 Cr, EBITDA ₹146 Cr. H1 FY27 ₹2,059 Cr</div></div>
+    <div class="kpi sm"><span class="eyebrow">Dealers and distributors</span><div class="v num">5,937</div><div class="l">FY26 BRSR, up from 4,092 in FY25. 90.66% of sales flow through them</div></div>
+    <div class="kpi sm"><span class="eyebrow">Plants · depots</span><div class="v num">30 · 53</div><div class="l">30 plants at 19 locations, 53 depots, 27 states and Nepal. R&amp;D centre in Hyderabad</div></div>
+    <div class="kpi sm"><span class="eyebrow">Influencer meets FY26</span><div class="v num">64,921</div><div class="l">Plumbers and contractors (pipes and putty); 8,132 retailers (roofs); 418 architects (walls)</div></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Named clients on birlanu.com (Aerocon Walls)</h3>
+      <p style="font-size:13px;color:var(--ink2);margin:6px 0 10px">Company-published references, verified on the site on 7 Nov 2026. Mapped to the NuFlow B2B segment each opens.</p>
+      <div class="tw"><table id="clienttab"></table></div>
+      <p class="note" style="margin-top:8px">These are references, not a customer ledger. Contract scope and volumes are not public. The internal dealer master, customer-wise sales MIS and project register would turn this into a ranked list.</p>
+    </div>
+    <div class="col" style="display:grid;gap:16px;align-content:start">
+      <div class="panel warm">
+        <h3>Warm accounts for NuFlow</h3>
+        <div class="tw" style="margin-top:8px"><table>
+          <tr><th>Route</th><th>Accounts</th><th>Ask</th></tr>
+          <tr><td><b>Developers already buying</b></td><td>DLF, M3M, Mahindra Lifespaces, Casagrand, Raheja, Appaswamy</td><td>Spec-in for one phase; sample flat; "behind-the-wall plus on-the-wall" bundle</td></tr>
+          <tr><td><b>EPC and contractors</b></td><td>L&amp;T, Tata Projects, Shirke, Ahluwalia Contracts</td><td>Approved-vendor listing for plumbing packages; MEP sub-contractor introductions</td></tr>
+          <tr><td><b>Institutions</b></td><td>Yashoda Hospital, SRM, IIM Jammu, Aurobindo, Airports Authority of India</td><td>Hostel, hospital and campus bathrooms: SAFE and CORE on an IS 9763 spec</td></tr>
+          <tr><td><b>Architects on record</b></td><td>Modarch, Prashant Deshmukh &amp; Associates (since 2008), Murty &amp; Manyam, Hiten Sethi &amp; Associates</td><td>First Product Intelligence pack reviews; HUE sample visits</td></tr>
+        </table></div>
+      </div>
+      <div class="panel">
+        <h3>Project references and what is verified</h3>
+        <div class="tw" style="margin-top:8px"><table>
+          <tr><th>Project</th><th>City</th><th>Status</th></tr>
+          <tr><td>Telangana Secretariat</td><td>Hyderabad</td><td><span class="tag src" style="margin:0">verified</span></td></tr>
+          <tr><td>Bharat Mandapam</td><td>New Delhi</td><td><span class="tag src" style="margin:0">verified</span></td></tr>
+          <tr><td>Symbiosis University</td><td>Pune</td><td><span class="tag src" style="margin:0">verified</span></td></tr>
+          <tr><td>Pune Metro</td><td>Pune</td><td><span class="tag src" style="margin:0">verified</span></td></tr>
+          <tr><td>AIIMS, Parliament, Coimbatore Airport, IIT Hyderabad</td><td>various</td><td><span class="tag unv" style="margin:0">not on birlanu.com</span></td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Footprint and recent moves</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Item</th><th>Detail</th><th>Relevance to NuFlow</th></tr>
+        <tr><td>Plants</td><td>Faridabad, Golan, Thimmapur, Chennai, Jhajjar, Kondapalli, Sathariya, Wada, Jasidih, Balasore, Cuttack, Hyderabad</td><td>Telangana and Andhra depots and plants back the Hyderabad pilot logistics</td></tr>
+        <tr><td>Topline / Crestia (₹265 Cr, merged Mar 2026)</td><td>Pipes brands Topline, Rockwell, Soniplast; East India stronghold; channel in 15 states; JJM approval in 12</td><td>An eastern dealer base for a later phase; JJM approvals show the team can clear government specs</td></tr>
+        <tr><td>Clean Coats (₹120 Cr, Nov 2025; merger Oct 2026)</td><td>Construction chemicals</td><td>Same developer and contractor buyers as waterproofing and tile adhesives</td></tr>
+        <tr><td>Capex</td><td>₹500 Cr for construction chemicals and piping; new boards plant near Hyderabad; Nellore greenfield</td><td>Management attention and project teams are growing in the South</td></tr>
+        <tr><td>Portfolio today</td><td>Pipes, construction chemicals, putty, roofs, walls, floors</td><td>No bathware yet. NuFlow is a new category: Aerocon clients are references, not faucet buyers</td></tr>
+      </table></div>
+    </div>
+    <div class="panel col">
+      <h3>The "behind-the-wall plus on-the-wall" offer</h3>
+      <p style="font-size:14px;color:var(--ink2);margin:6px 0 10px">The plan's riskiest assumption is seven developer phases in Year 1. The argument for it is a single-supplier plumbing spec:</p>
+      <ul class="tight">
+        <li><b>One spec.</b> CPVC and uPVC pipes, valves, fittings and NuFlow CP kits specified together, with one warranty and one service hotline.</li>
+        <li><b>One approval.</b> The developer's existing approved-vendor status for BirlaNu pipes shortens the "or equivalent" approval for the faucet.</li>
+        <li><b>One site team.</b> BirlaNu's plumber and contractor meets (64,921 in FY26) become the installer training for kits.</li>
+        <li><b>One invoice.</b> Project procurement prefers fewer vendors; MEP contractors prefer fewer deliveries.</li>
+      </ul>
+      <p class="note warn" style="margin-top:10px">Discipline: approach the warm accounts only with the spec pack ready (test reports, IS marks, warranty, price book). A warm door opened too early is a cold door later.</p>
+      <h4 style="margin-top:14px">Internal data still needed</h4>
+      <ul class="tight" style="margin-top:6px">
+        <li>Dealer master with PIN codes and active status, to pick the 200 Year 1 plumbing dealers.</li>
+        <li>Customer-wise sales MIS FY25–26, to rank developers and contractors by spend.</li>
+        <li>Project register (developer, architect, contractor, product, city), to match fit-out dates.</li>
+        <li>Top-50 customer report with repeat-order status.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTNERS ================= -->
+<section class="view" id="v-partners" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">Partner universe · evidence-graded</span>
+    <h2>Who to approach, ranked by what you care about</h2>
+    <p>Developers, hotel owners, hotel brands, contractors, designers and advisors. Each card shows the published scale, what its specification says about bathware brands, whether BirlaNu already has a route in, and the entry move. Scores are 1 to 5 judgements; move the weights to re-rank.</p>
+  </div></div>
+  <div class="slide" data-slide="partners"></div>
+  <div class="panel">
+    <div class="grid g2">
+      <div class="col" id="wts"></div>
+      <div class="col">
+        <div class="eyebrow" style="margin-bottom:8px">Show</div>
+        <div class="chips" id="pf"></div>
+        <div class="legend" style="margin-top:12px"><span><span class="pill open">Spec: open</span> "or equivalent" wording</span><span><span class="pill none">Spec: unbranded</span> no brand named</span><span><span class="pill fixed">Spec: fixed</span> brand shortlist</span><span><span class="pill ref">Supplier reference</span> published hotel case</span><span><span class="pill unknown">Spec: not published</span></span><span><span class="pill warm">Warm via BirlaNu</span></span></div>
+        <p class="note" style="margin-top:12px"><b>Volume</b>: homes or rooms flowing through. <b>Polymer fit</b>: how likely the segment accepts a polymer-hybrid line. <b>South reach</b>: presence in Telangana and the South. <b>Access</b>: how reachable the decision-maker is. <b>Warmth</b>: an existing BirlaNu relationship or an open spec.</p>
+      </div>
+    </div>
+  </div>
+  <div class="plist" id="plist"></div>
+</section>
+
+<!-- ================= GEOGRAPHY ================= -->
+<section class="view" id="v-geography" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">India geography</span>
+    <h2>Homes cluster in seven metros. New hotels are leaving them.</h2>
+    <p>Filled circles are 2025 home launches in the top 7 cities. Rings are towns with named branded hotel projects. Below, the city ranking for the home channel and the state view for project counts.</p>
+  </div></div>
+  <div class="slide" data-slide="geography"></div>
+  <div class="grid g2">
+    <div class="panel col"><svg class="chart" id="map" viewBox="0 0 640 600" role="img" aria-label="Map of India showing home launches by city and towns with branded hotel projects"></svg>
+      <div class="legend"><span><i style="background:var(--s1);border-radius:50%"></i>Home launches 2025 (area)</span><span><svg width="12" height="12" style="vertical-align:-2px;margin-right:6px"><circle cx="6" cy="6" r="4.5" fill="none" stroke="var(--s2)" stroke-width="2"/></svg>Named hotel pipeline town</span></div>
+    </div>
+    <div class="col" style="display:grid;gap:16px;align-content:start">
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <div class="kpi sm"><span class="eyebrow">Tier 2 and 3 share of signed rooms, 2025</span><div class="v num">71<small>%</small></div><div class="l">51,647 rooms signed, JLL</div></div>
+        <div class="kpi sm"><span class="eyebrow">Hyderabad branded rooms</span><div class="v num">7,785</div><div class="l">+2,692 proposed; 75.9% occupancy, ADR ₹9,306 (Hotelivate, Oct 2025)</div></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-bottom:6px">Rank the metros for homes</h3>
+        <p style="font-size:13px;color:var(--ink2);margin-bottom:6px">Each measure is scaled 0 to 100 across the seven cities.</p>
+        <div id="cw"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tw"><table id="ctab"></table></div>
+  <p class="note">Hyderabad ranked low on 2025 momentum because launches fell 26% that year. In 2026 it reversed: 9M launches 32,577 (+6%), Q3 sales +15% (Knight Frank, Anarock), and it is the team's base with BirlaNu's R&amp;D centre and depots. Bengaluru and Chennai remain the natural step-outs; Pune and NCR follow in FY30.</p>
+
+  <div class="grid g2">
+    <div class="col">
+      <div class="sec-h"><h3>Hyderabad and Telangana signals</h3></div>
+      <div class="tw"><table>
+        <tr><th>Project</th><th class="n">Keys</th><th>Who</th><th>Timing</th></tr>
+        <tr><td>Ritz-Carlton, Madhapur</td><td class="n">330</td><td>Chalet with Mindspace, Marriott brand</td><td>FY29</td></tr>
+        <tr><td>InterContinental, Neopolis</td><td class="n">300</td><td>Brigade, IHG</td><td>2029</td></tr>
+        <tr><td>Radisson Collection, Financial District</td><td class="n">300</td><td>Radisson Hotel Group</td><td>Was Q2 2026; no opening found, treat as delayed <span class="tag unv" style="margin:0">unverified</span></td></tr>
+        <tr><td>Radisson Blu Resort, Chevella</td><td class="n">160</td><td>Radisson Hotel Group</td><td>Was Q2 2026; no opening found <span class="tag unv" style="margin:0">unverified</span></td></tr>
+        <tr><td>Hilton Garden Inn, Kompally</td><td class="n">n/a</td><td>Hilton</td><td>2028</td></tr>
+        <tr><td>300 company-serviced hotels</td><td class="n">n/a</td><td>PRISM (OYO) across Hyderabad, Warangal, Karimnagar, Khammam</td><td>Announced Feb 2026</td></tr>
+        <tr><td>Telangana Tourism Policy 2025–30</td><td class="n">–</td><td>₹15,000 Cr investment target; 50% SGST reimbursement (hotels reportedly excluded)</td><td>In force</td></tr>
+      </table></div>
+    </div>
+    <div class="col">
+      <div class="sec-h"><h3>Tier 2 and 3 towns with named projects</h3></div>
+      <div class="tw"><table>
+        <tr><th>Town</th><th>Signal</th></tr>
+        <tr><td>Udaipur</td><td>Branded supply up 32% in 2025-26</td></tr>
+        <tr><td>Dehradun, Lucknow, Amritsar</td><td>Supply up 19%, 14.6%, 11.5%</td></tr>
+        <tr><td>Patna, Raipur, Lucknow, Bhubaneswar, Jaipur</td><td>ITC Hotels signings in the last 12 months</td></tr>
+        <tr><td>Madurai, Mcleodganj</td><td>Lemon Tree signings, Aug 2026</td></tr>
+        <tr><td>Ayodhya, Guwahati</td><td>Multiple brands signed around new airports</td></tr>
+        <tr><td>Shirdi, Bhubaneswar, Guwahati</td><td>Named ITC owner-partners: Sandy Resort (73 and 84 keys), Bhauram Jodhraj (43-key Storii)</td></tr>
+      </table></div>
+      <div class="sec-h" style="margin-top:16px"><h3>Projects registered by state (RERA)</h3></div>
+      <div class="tw"><table>
+        <tr><th>State</th><th class="n">Projects</th><th>As of</th></tr>
+        <tr><td>Maharashtra</td><td class="n">50,162</td><td>May 2025 (35% of India)</td></tr>
+        <tr><td>Tamil Nadu</td><td class="n">27,609</td><td>May 2025</td></tr>
+        <tr><td>Gujarat</td><td class="n">15,322</td><td>May 2025</td></tr>
+        <tr><td>Telangana</td><td class="n">8,227</td><td>Nov 2023 (latest found)</td></tr>
+        <tr><td>All India</td><td class="n">1,44,617</td><td>May 2025</td></tr>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NUMBERS ================= -->
+<section class="view" id="v-numbers" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">TAM, SAM, SOM</span>
+    <h2>Build the market bottom-up, then check it from the top</h2>
+    <p>Per year, in ₹ crore, for the CP-fittings set of a bathroom (basin, shower, health faucet, valves, bib taps). Four layers: developer homes in the top 7 cities, developer homes in 15 Tier 2 cities, branded hotel rooms (new and replacement) and PMAY partnership housing. SOM follows the GTM plan's kit model. Change any slider; tags show what is published and what is assumed.</p>
+  </div></div>
+  <div class="slide" data-slide="numbers"></div>
+
+  <div class="panel">
+    <div class="grid g2" style="align-items:center">
+      <div><div class="eyebrow" style="margin-bottom:8px">Scenario</div>
+        <div class="chips" id="presets"><button class="chip" data-p="low" aria-pressed="false">Low</button><button class="chip" data-p="base" aria-pressed="true">Base</button><button class="chip" data-p="high" aria-pressed="false">High</button></div></div>
+      <div><div class="eyebrow" style="margin-bottom:8px">Geography (scales the top-7 homes and hotel layers; Tier 2 and PMAY stay national)</div>
+        <div class="chips" id="gc"></div></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="col panel">
+      <h3>Market size</h3>
+      <svg class="chart" id="funnel" viewBox="0 0 560 190" role="img" aria-label="TAM, SAM and SOM bars"></svg>
+      <h3 style="margin-top:14px">What the TAM is made of</h3>
+      <svg class="chart" id="stack" viewBox="0 0 560 100" role="img" aria-label="TAM composition"></svg>
+      <div class="legend" id="stackleg"></div>
+      <details class="tbl"><summary>Show as table</summary><div class="tw" style="margin-top:8px"><table id="mt"></table></div></details>
+      <h3 style="margin-top:18px">Cross-check from published market reports</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Layer</th><th class="n">₹ Cr / yr</th><th>Note</th></tr>
+        <tr><td>Bathware, FY25 (Anand Rathi)</td><td class="n">33,100</td><td>Faucets 61%, sanitaryware 39% <span class="tag src" style="margin:0">sourced</span></td></tr>
+        <tr><td>Faucets, FY25</td><td class="n">20,190</td><td>PL Capital gives the same ₹201.9 bn <span class="tag src" style="margin:0">sourced</span></td></tr>
+        <tr><td>Organised faucets (60%)</td><td class="n">12,114</td><td>Jaquar 15–20% share, Hindware and Cera 4–5% each</td></tr>
+        <tr><td>Organised project faucets (≈40%)</td><td class="n" id="td1">4,846</td><td>Cera 39% project, Jaquar ~40%. All cities, all building types <span class="tag der" style="margin:0">derived</span></td></tr>
+        <tr><td>…of which new construction (≈75%)</td><td class="n" id="td2">3,634</td><td>Replacement 20–25% of bathware, higher for faucets</td></tr>
+        <tr><td><b>This model, base TAM</b></td><td class="n" id="td3">–</td><td>A defined, reachable slice of the ceiling, incl. showers</td></tr>
+        <tr><td>Mordor, India bath fittings 2025</td><td class="n" id="td4">–</td><td>USD 11.49 B at ₹88. Faucets 36.45% ≈ ₹36,855 Cr, B2B faucets ≈ ₹9,498 Cr. Differs from Anand Rathi by 1.8×, so scopes differ <span class="tag unv" style="margin:0">conflicts</span></td></tr>
+      </table></div>
+    </div>
+    <div class="col panel">
+      <h3>Developer homes, top 7 cities</h3>
+      <div id="s-r"></div>
+      <h3 style="margin-top:16px">Developer homes, 15 Tier 2 cities</h3>
+      <div id="s-t"></div>
+      <h3 style="margin-top:16px">Branded hotel rooms</h3>
+      <div id="s-h"></div>
+      <h3 style="margin-top:16px">PMAY partnership housing</h3>
+      <div id="s-p"></div>
+      <h3 style="margin-top:16px">Share a NuFlow kit can be specified into (SAM)</h3>
+      <div id="s-e"></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="col panel">
+      <h3>Project revenue FY28–FY32 against the plan</h3>
+      <svg class="chart" id="rev" viewBox="0 0 560 300" role="img" aria-label="B2B revenue by year against the GTM plan"></svg>
+      <div class="legend"><span><i style="background:var(--s1)"></i>Developer kits</span><span><i style="background:var(--s2)"></i>Hotel kits</span><span><i style="background:var(--s4)"></i>Atelier</span><span><i style="background:var(--neutral)"></i>GTM plan, project channels (Y1 and Y5 published)</span></div>
+      <details class="tbl"><summary>Show as table</summary><div class="tw" style="margin-top:8px"><table id="rt"></table></div></details>
+      <p class="note" style="margin-top:12px">The plan's total revenue is ₹6.88 Cr in FY28 and ₹68.53 Cr in FY32, of which project channels are ₹3.22 Cr and ₹18.60 Cr. The kit model here uses the plan's realised kit prices; the plan's Year 5 developer figure is higher than 32 phases × the Year 1 kit mix, so it assumes a richer mix or larger phases by then.</p>
+    </div>
+    <div class="col panel">
+      <h3>Projects the team wins (SOM)</h3>
+      <div id="s-o"></div>
+      <p class="note" style="margin-top:12px">Gate G1 in the plan: at least 5 developer phases and 4 hotels under PO with a 20% advance by March 2027, the rest by September 2027. Below that, Year 1 hiring is cut to 4 people.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLAYBOOK ================= -->
+<section class="view" id="v-playbook" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">Go-to-market playbook · deck-ready</span>
+    <h2>Spec-in, land, expand, pull through.</h2>
+    <p>The institutional motion in the language of the main deck: ideal customer profile, positioning, value proposition by persona, the sales motion, offer architecture, demand generation, objection handling, gates and KPIs, and the sequence.</p>
+  </div></div>
+  <div class="slide" data-slide="playbook"></div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <span class="eyebrow">Positioning statement</span>
+      <p class="pos" style="margin-top:8px">For developers and hotel owners who specify mid-premium bathrooms, NuFlow is the fittings system that gives a brass-brand finish and warranty at polymer-hybrid economics, from the company already behind their walls.</p>
+      <p class="note" style="margin-top:12px">Claim discipline from the plan: "tested against stated water conditions", never "hard-water proof"; no blanket "lead-free".</p>
+      <h4 style="margin-top:16px">Reasons to believe</h4>
+      <ul class="tight" style="margin-top:6px">
+        <li>Quarter-turn ceramic cartridges tested to 200,000 cycles; IS 9763 / IS 8931 mapping; IS 17650-2 water efficiency.</li>
+        <li>QR product passport with test results; front-serviceable modules; 5-year parts-only warranty.</li>
+        <li>Brass is 48.7% of India's faucet material and rose about 40% in a year; the polymer-hybrid body de-risks the developer's BOQ.</li>
+        <li>One plumbing spec with BirlaNu pipes, valves and chemicals: one vendor, one warranty, one site team.</li>
+      </ul>
+    </div>
+    <div class="panel col">
+      <span class="eyebrow">Ideal customer profile (ICP)</span>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Segment</th><th>Fit criteria</th><th>Lead with</th></tr>
+        <tr><td><b>Developer phase</b></td><td>Apartments at ₹80 L–2.5 Cr; 150+ units in the phase; fit-out 6–12 months out; spec says "or equivalent" or no brand; Hyderabad, Bengaluru, Chennai first</td><td>Premier kit (HUE + SAFE); sample flat</td></tr>
+        <tr><td><b>Affordable phase</b></td><td>₹40–80 L; ISI-marked spec; PMAY partnership or Signature Global-type developer</td><td>Essential kit (CORE + SAFE)</td></tr>
+        <tr><td><b>Hotel owner or franchisee</b></td><td>60–150 keys; economy to upper-midscale brand (Lemon Tree, Keys, Ginger, Radisson Individuals, PRISM); new-build or refurbishment</td><td>Hotel room kit; longer warranty; parts hotline</td></tr>
+        <tr><td><b>Institution</b></td><td>Hostels, hospitals, campuses already buying BirlaNu panels or pipes</td><td>SAFE and CORE on an IS 9763 spec</td></tr>
+        <tr><td><b>Atelier capsule (FY30+)</b></td><td>Boutique hotel, villa, designer show flat; architect-led</td><td>Atelier suite kit; design collaboration</td></tr>
+      </table></div>
+      <p class="note warn" style="margin-top:10px">Not ICP now: luxury chains on global brand standards (Chalet, Juniper, Leela, EIH) except back-of-house; fixed-shortlist specs (Puravankara Atmosphere type); ultra-luxury Italian-brand specs (Aparna One type).</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-h"><h3>Value proposition by persona</h3><p>Who decides, what they are judged on, and what NuFlow brings. Roles follow the professional directions document.</p></div>
+    <div class="grid g3" id="personas"></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Sales motion: spec-in → land → expand → pull through</h3>
+      <div class="steps" style="margin-top:10px">
+        <div class="step"><div class="when"><b>1</b>Spec-in</div><div><h4>Get on the approved list</h4><ul><li>Ask every target for its approved-vendor process and current bathware supplier (first meeting, every time).</li><li>Submit the spec pack: test reports, IS marks, warranty, CAD/BIM, price book. Pass the "or equivalent" clause.</li><li>Architect-specification manager logs each spec written (target: 40 by Mar 2028).</li></ul></div></div>
+        <div class="step"><div class="when"><b>2</b>Land</div><div><h4>One phase, one sample flat</h4><ul><li>Pilot a tower or phase with a sample flat the developer's sales team uses.</li><li>Install with trained fitters; record callbacks, cost per bathroom and installer feedback.</li><li>PO with 20% advance; milestone billing; receivables ≤ 60 days.</li></ul></div></div>
+        <div class="step"><div class="when"><b>3</b>Expand</div><div><h4>Framework across the developer's book</h4><ul><li>Convert the pilot into a framework MoU across upcoming phases (GROHE did this with Gaurs for 40,000 NCR homes in July 2026).</li><li>Bundle with BirlaNu pipes and chemicals on the next project's BOQ.</li><li>Repeat orders from the same developer are the KPI that matters.</li></ul></div></div>
+        <div class="step"><div class="when"><b>4</b>Pull through</div><div><h4>Projects feed retail</h4><ul><li>Each installed flat is a demonstration for the buyer's next renovation and for the dealer cluster around it.</li><li>QR-verified installs route spares, HUE inserts and warranty claims to the brand site.</li><li>Studios in the same cluster carry the hero 8 SKUs seen in the show flat.</li></ul></div></div>
+      </div>
+    </div>
+    <div class="col" style="display:grid;gap:16px;align-content:start">
+      <div class="panel">
+        <h3>Offer architecture</h3>
+        <div class="tw" style="margin-top:8px"><table>
+          <tr><th>Kit</th><th class="n">MRP incl. GST</th><th class="n">Realised</th><th>Use</th></tr>
+          <tr><td>Premier developer kit</td><td class="n">₹19,293</td><td class="n">₹11,445 (30% off)</td><td>₹80 L–2.5 Cr homes</td></tr>
+          <tr><td>Essential developer kit</td><td class="n">₹7,195</td><td class="n">₹4,268 (30% off)</td><td>Affordable, servant and secondary bathrooms</td></tr>
+          <tr><td>Hotel room kit</td><td class="n">₹20,293</td><td class="n">₹11,178 (35% off)</td><td>Economy to upper-midscale rooms</td></tr>
+          <tr><td>Atelier suite kit</td><td class="n">₹49,293</td><td class="n">₹31,330 (25% off)</td><td>Boutique, villa, show flat</td></tr>
+        </table></div>
+        <p class="note" style="margin-top:8px">Benchmarks: a standard brass set (Jaquar, Cera, Hindware) retails at ₹22,000–35,000 per bathroom before discount; economy brass ₹9,000–15,000; luxury ₹55,000+. Discount ceilings 30% developers, 35% hotels; a longer warranty is offered before a deeper cut.</p>
+      </div>
+      <div class="panel">
+        <h3>Objection handling</h3>
+        <div class="tw" style="margin-top:8px"><table>
+          <tr><th>Objection</th><th>Response</th></tr>
+          <tr><td>"Polymer is a tier-3 product."</td><td>Show the cut-away, the PVD and chrome finish, the cartridge test and the warranty. Point to brass inflation on their own BOQ. Lead with SAFE and HUE, not CORE.</td></tr>
+          <tr><td>"Our spec says Jaquar."</td><td>Most say "or equivalent". Submit the equivalence file (IS marks, test reports, finish samples) to the architect and procurement together.</td></tr>
+          <tr><td>"Brand standards do not allow it."</td><td>Agreed for luxury chains. Offer back-of-house and staff areas only; target owners of midscale brands where the owner buys.</td></tr>
+          <tr><td>"Who services it in five years?"</td><td>Front-serviceable modules, a parts hotline, QR passport per unit, dealers in 27 states, 53 depots.</td></tr>
+          <tr><td>"You are new."</td><td>BirlaNu is already on the site: pipes, panels, chemicals. Same account team, same warranty desk.</td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel col">
+      <h3>Demand generation for specifiers</h3>
+      <ul class="tight" style="margin-top:8px">
+        <li><b>Sample flats</b> (two in Hyderabad by Feb 2027) and one showcase hotel room: the demonstration the case directions ask for.</li>
+        <li><b>Architect connect</b>: Product Intelligence pack (3D anatomy, material map, CAD/BIM), HUE colour samples, studio visits. Hindware and Cera run the same programme; NuFlow's edge is the open cut-away and the QR passport.</li>
+        <li><b>Experience centre</b> in Hyderabad in Year 2, where Kohler, Roca and Hindware have opened since 2024.</li>
+        <li><b>Fitter training</b>: 300 fitters in 25-person sessions before first deliveries; QR rewards paid only for installs with no 90-day callback.</li>
+        <li><b>Platform listings</b> (Brick&amp;Bolt, Infra.Market IVAS, Moglix) after the first references, for contractor reach.</li>
+        <li><b>Reference content</b>: one-page case per installed phase, with callback rate and cost per bathroom, for the next procurement head.</li>
+      </ul>
+    </div>
+    <div class="panel col">
+      <h3>Gates and KPIs</h3>
+      <div class="tw" style="margin-top:8px"><table>
+        <tr><th>Gate / KPI</th><th>Threshold</th><th>Why</th></tr>
+        <tr><td>G0 · landed cost</td><td>Within 10% of plan from 3 OEM quotes</td><td>Gross margin ≥ 50% per SKU</td></tr>
+        <tr><td>G1 · order book</td><td>≥ 5 phases and 4 hotels under PO with 20% advance by Mar 2027</td><td>Year 1 clears 18% only with projects pre-sold</td></tr>
+        <tr><td>Project order book</td><td>≥ ₹3.2 Cr by Sep 2027</td><td>Year 1 revenue</td></tr>
+        <tr><td>Architect specs logged</td><td>40 by Mar 2028</td><td>Pipeline for Years 2–3</td></tr>
+        <tr><td>Repeat orders</td><td>≥ 1 per landed developer within 12 months</td><td>Expand step working</td></tr>
+        <tr><td>Project receivable days</td><td>≤ 60</td><td>Cash</td></tr>
+        <tr><td>QR-verified installs, zero 90-day callbacks</td><td>≥ 95%</td><td>The service promise</td></tr>
+        <tr><td>Returns and warranty claims</td><td>&lt; 1% of units</td><td>Polymer credibility</td></tr>
+        <tr><td>B2B share of revenue</td><td>≈ 47% Y1 → 27% Y5</td><td>Projects launch, retail scales</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-h"><h3>Sequence</h3><p>Follows the case directions: identify developers and contractors, form partnerships, demonstrate, install, then expand to retail. Dates line up with the plan's FY28 launch.</p></div>
+    <div class="steps">
+      <div class="step"><div class="when"><b>Nov 26–Mar 27</b>Prepare</div><div><h3>Lock cost, pre-sell, build proof</h3><ul>
+        <li>RFQs to three OEMs for the 11 launch SKUs; samples; pressure, thermal-cycle and cartridge tests. Gate G0.</li>
+        <li>List BirlaNu accounts with mid-premium towers 6–12 months from fit-out. Lead with Brigade, Puravankara, Mahindra Lifespaces and the Hyderabad developers with open specs (Rajapushpa, Aparna, Vasavi, Prestige Golden Grove).</li>
+        <li>Brief PRISM (OYO) Telangana and Lemon Tree and Radisson franchise owners. Two sample flats. Spec pack, price book, 5-year warranty. Gate G1 by March 2027.</li></ul></div></div>
+      <div class="step"><div class="when"><b>FY28</b>Pilot</div><div><h3>7 phases and 6 hotels in Telangana</h3><ul>
+        <li>Hyderabad, Warangal, Karimnagar. First kit deliveries from month 4; 300 fitters trained.</li>
+        <li>Retail launch in July 2027: 80 studios, 200 BirlaNu dealers, brand site with spares and HUE inserts. Gate G2 after 90 days.</li>
+        <li>Record callback rate and cost per bathroom on every phase; publish the first reference cases.</li></ul></div></div>
+      <div class="step"><div class="when"><b>FY29</b>South</div><div><h3>12 phases and 10 hotels across Hyderabad, Bengaluru, Chennai</h3><ul>
+        <li>Developers with South books: Puravankara, Sobha, Prestige, Brigade, Casagrand (warm via BirlaNu), Shriram, Sumadhura, Ramky.</li>
+        <li>Midscale owners tied to Radisson and Lemon Tree in Tier 2 towns; SENSE added for hotel wet areas.</li>
+        <li>Hyderabad experience centre opens once POs cover it.</li></ul></div></div>
+      <div class="step"><div class="when"><b>FY30–32</b>Extend</div><div><h3>18 → 32 phases, 16 → 28 hotels, Atelier from FY30</h3><ul>
+        <li>Pune and NCR in FY30 with developers already served in the South, plus DLF and M3M as warm NCR accounts; Mumbai MMR and Kolkata in FY31.</li>
+        <li>Tier 2 hotel towns and Tier 2 developers from FY31, through the dealer clusters built in Years 1–3.</li>
+        <li>Atelier capsules in boutique hotels and designer show flats; luxury chains back-of-house only until standards change.</li></ul></div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="sec-h"><h3>Risks and responses</h3></div>
+    <div class="tw"><table>
+      <tr><th>Risk</th><th>Early signal</th><th>Response</th></tr>
+      <tr><td>Developers will not commit 7 phases in Year 1</td><td>Fewer than 5 phases under PO by March 2027</td><td>Launch at the G1 scope: 4 hires, studio roll-out held; aim for break-even in Year 1, 18% from Year 2</td></tr>
+      <tr><td>"Or equivalent" approvals stall at the architect</td><td>Spec pack submitted but no approval within 60 days</td><td>Escalate with procurement on cost; offer the servant or secondary bathroom line first; bring the BirlaNu account owner</td></tr>
+      <tr><td>Mid-premium buyers reject polymer</td><td>Studio reorders under 60%; HUE share under 30%</td><td>Lead with SAFE and the warranty; cut-aways and test data; keep HUE prices</td></tr>
+      <tr><td>Luxury standards bar polymer</td><td>No approval at G5</td><td>Atelier stays a capsule for boutique and villa projects</td></tr>
+      <tr><td>Project discounting undercuts dealers</td><td>Street price more than 8% off MRP in a cluster</td><td>Price book only; discount ceilings; CFO sign-off beyond them</td></tr>
+      <tr><td>Incumbents respond in projects</td><td>Jaquar or Hindware matches price on a pilot</td><td>Compete on spec support, warranty and the single-supplier bundle, not price</td></tr>
+      <tr><td>Field failures in hard-water cities</td><td>Returns over 1% in any cluster</td><td>Stop the batch by QR trace; swap modules through certified fitters; 3% reserve</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- ================= EVIDENCE ================= -->
+<section class="view" id="v-evidence" hidden>
+  <div class="sec-top"><div class="sec-h">
+    <span class="eyebrow">Evidence log</span>
+    <h2>Every figure, where it came from, and how sure to be</h2>
+    <p>Sourced figures were read from the linked pages in November 2026. Derived figures are arithmetic on sourced ones. Assumed figures are the analyst's and are the first thing to challenge. Unverified items are flagged so no slide repeats them as fact.</p>
+  </div></div>
+  <div class="slide" data-slide="evidence"></div>
+  <div class="chips" id="ef"></div>
+  <div class="tw"><table id="etab"></table></div>
+</section>
+</main>
+<div id="tip" role="tooltip"></div>
+<script>
+/* ---------- data ---------- */
+const CITIES=[
+ {id:'MMR',name:'Mumbai MMR',lat:19.07,lon:72.88,launch:126140,sold:127875,yoy:-6,below:72,gradeA:26,ticket:'Over 72% under ₹1.5 Cr',dx:-34,dy:-26,a:'end'},
+ {id:'PUN',name:'Pune',lat:18.52,lon:73.86,launch:67955,sold:65135,yoy:12,below:86,gradeA:46,ticket:'Over 86% under ₹1.5 Cr',dx:26,dy:22,a:'start'},
+ {id:'BLR',name:'Bengaluru',lat:12.97,lon:77.59,launch:74260,sold:62205,yoy:5,below:79,gradeA:57,ticket:'About 79% in ₹75 L to 2.5 Cr',dx:-30,dy:18,a:'end'},
+ {id:'NCR',name:'Delhi NCR',lat:28.61,lon:77.21,launch:61775,sold:57220,yoy:14,below:45,gradeA:70,ticket:'Over 55% above ₹2.5 Cr',dx:34,dy:-14,a:'start'},
+ {id:'HYD',name:'Hyderabad',lat:17.38,lon:78.48,launch:43260,sold:44885,yoy:-26,below:65,gradeA:39,ticket:'Over 65% under ₹2.5 Cr; 2026 rebound',dx:0,dy:36,a:'middle'},
+ {id:'CHE',name:'Chennai',lat:13.08,lon:80.27,launch:27190,sold:22180,yoy:30,below:71,gradeA:60,ticket:'Over 71% under ₹2.5 Cr',dx:24,dy:14,a:'start'},
+ {id:'KOL',name:'Kolkata',lat:22.57,lon:88.36,launch:18590,sold:16125,yoy:31,below:87,gradeA:43,ticket:'About 87% under ₹1.5 Cr',dx:-20,dy:-16,a:'end'}
+];
+const TOWNS=[
+ ['Patna',25.59,85.14,'ITC signing, 140 keys'],['Lucknow',26.85,80.95,'Supply +14.6%; ITC signing; Tier 2 sales +6%'],['Jaipur',26.91,75.79,'ITC Welcomhotel, 140 keys'],
+ ['Raipur',21.25,81.63,'ITC signing; Radisson; FY26 land deals'],['Bhubaneswar',20.30,85.82,'ITC signing; Sandy Resort 84-key Welcomhotel'],['Udaipur',24.58,73.68,'Supply +32% in 2025-26'],
+ ['Guwahati',26.14,91.74,'Marriott, Taj; Bhauram Jodhraj 43-key Storii'],['Amritsar',31.63,74.87,'Supply +11.5%; 520-acre land deal'],['Dehradun',30.32,78.03,'Supply +19%'],
+ ['Ayodhya',26.80,82.20,'IHCL, Marriott, Radisson, Wyndham'],['Warangal',17.97,79.59,'PRISM (OYO) target town'],['Madurai',9.92,78.12,'Lemon Tree Premier, 100 rooms'],
+ ['Shirdi',19.77,74.48,'Sandy Resort 73-key Welcomhotel'],['Ahmedabad',23.02,72.57,'Tier 2 leader: 51,148 homes sold 2025'],['Mohali',30.70,76.72,'Tier 2 launches +108%'],['Coimbatore',11.02,76.96,'Tier 2 sales +21% Q1 2025; land deals']
+];
+const TLAB={Patna:[8,12,'start'],Lucknow:[-8,-8,'end'],Jaipur:[-8,-8,'end'],Raipur:[8,12,'start'],Bhubaneswar:[8,12,'start'],Udaipur:[-8,-8,'end'],Guwahati:[0,-10,'middle'],Amritsar:[8,4,'start'],Dehradun:[8,4,'start'],Ayodhya:[8,-6,'start'],Warangal:[9,-9,'start'],Madurai:[8,4,'start'],Shirdi:[-8,12,'end'],Ahmedabad:[-8,-8,'end'],Mohali:[8,-6,'start'],Coimbatore:[8,12,'start']};
+
+const TYPES={resi:'Home developer',owner:'Hotel owner-developer',brand:'Hotel brand or operator',epc:'Contractor or EPC',design:'Architect or designer',adv:'Advisor, platform or procurement'};
+const L=(t,u)=>({t,u});
+/* sc: [volume, polymer fit, south reach, access, warmth] */
+const SPECL={open:'Spec: open ("or equivalent")',none:'Spec: unbranded',fixed:'Spec: fixed shortlist',unknown:'Spec: not published',ref:'Supplier reference published'};
+const PARTNERS=[
+ /* ---- home developers ---- */
+ {n:'Brigade (Enterprises and Hotel Ventures)',t:'resi',sc:[4,3,5,4,4],warm:false,
+  spec:{s:'open',txt:'Unit-plan spec: CP fittings "Jaquar/Ess Ess/Essco or equivalent"; EWC "Hindware/Parryware/Cera or equivalent".',u:'https://cdn.brigadegroup.com/properties/plans/15651750455d4aad0582bbb.pdf'},
+  scale:'FY26 pre-sales ₹7,424 Cr. 9 hotels, 1,604 rooms; ₹3,600 Cr plan to add 9 hotels by FY31. 300-key InterContinental at Neopolis, Hyderabad (2029).',
+  why:'Holds both a home book and a hotel pipeline in the pilot region, and its spec is open at the Essco tier, where a polymer-hybrid kit competes.',
+  entry:'Pilot a residential tower or phase in Hyderabad or Bengaluru; then back-of-house and staff-area fittings in its hotels.',
+  src:[L('Brigade spec PDF','https://cdn.brigadegroup.com/properties/plans/15651750455d4aad0582bbb.pdf'),L('FY26 pre-sales, Business Standard','https://www.business-standard.com/'),L('InterContinental Hyderabad','https://www.hotelmanagement-network.com/?p=64087')]},
+ {n:'Puravankara / Provident',t:'resi',sc:[3,3,5,4,3],warm:false,
+  spec:{s:'open',txt:'Northern Lights: showers "Grohe / Jaquar or equivalent". Provident Capella: "Queo or equivalent". Purva Atmosphere is a fixed luxury shortlist (Artize/Kohler/Grohe/Kludi).',u:'https://www.purvanorthernslights.in/specification/'},
+  scale:'FY26 pre-sales ₹7,407 Cr; FY27 estimate ₹11,200 Cr (+51%). Bengaluru-based; Provident is the affordable-mid brand.',
+  why:'Fastest growth on the list; mid-premium and Provident lines have open specs. Its luxury line is closed.',
+  entry:'Provident and Purva mid-premium phases first; keep Atmosphere-type projects off the list.',
+  src:[L('Northern Lights spec','https://www.purvanorthernslights.in/specification/'),L('Provident Capella','https://www.homznspace.com/provident-capella-whitefield-bangalore-reviews-price/'),L('Atmosphere RERA spec','https://img.staticmb.com/mbimages/reradoc/2024/06/21/5128889ProjectSpecification_2_4.pdf'),L('Pre-sales, Realty Today','https://therealtytoday.com/news/market-insights/top-11-developers-defy-global-headwinds-inr-18-lakh-cr-pre-sales-targeted-in-fy27/')]},
+ {n:'Prestige Group',t:'resi',sc:[5,3,4,3,3],warm:false,
+  spec:{s:'open',txt:'Golden Grove, Tellapur (Hyderabad, ₹1.04 Cr+): CP "Kohler, Grohe, or equivalent". Southern Star (Bengaluru): "Roca/Jaguar/Kohler/American Standard/Grohe/Moen or equivalent". Clairemont (luxury) names no brand.',u:'https://www.homznspace.com/prestige-golden-grove-tellapur-hyderabad/'},
+  scale:'FY26 pre-sales ₹30,024 Cr, second-largest listed developer. Hospitality arm sold 27% to CPP Investments for ₹3,000 Cr.',
+  why:'Large Hyderabad and Bengaluru book with open mid-premium specs anchored to Kohler and Grohe, so the equivalence file has to be strong on finish.',
+  entry:'Golden Grove-type Hyderabad phases; residential procurement first, hospitality arm second.',
+  src:[L('Golden Grove spec','https://www.homznspace.com/prestige-golden-grove-tellapur-hyderabad/'),L('Southern Star spec','https://www.homznspace.com/prestige-southern-star-akshayanagar-bannerghatta-bangalore/'),L('Pre-sales','https://therealtytoday.com/news/market-insights/top-11-developers-defy-global-headwinds-inr-18-lakh-cr-pre-sales-targeted-in-fy27/')]},
+ {n:'Rajapushpa Properties',t:'resi',sc:[2,3,5,4,3],warm:false,
+  spec:{s:'open',txt:'The Retreat, Kokapet: "All CP fittings ... Jaquar or equivalent make".',u:'https://images.jdmagicbox.com/standard/brouchers/040pxx40.xx40.200923194208.n7g9/rajapushpa-the-retreat_ioctvfwrsk.pdf'},
+  scale:'Hyderabad developer with premium projects in Kokapet and Tellapur. Volume not published.',
+  why:'Local, reachable, open spec in the pilot city. The kind of developer where a first sample flat is realistic.',
+  entry:'Sample flat in a Kokapet or Tellapur phase; secondary bathrooms first if the main bathroom is Jaquar-locked by sales promises.',
+  src:[L('Retreat brochure','https://images.jdmagicbox.com/standard/brouchers/040pxx40.xx40.200923194208.n7g9/rajapushpa-the-retreat_ioctvfwrsk.pdf')]},
+ {n:'Aparna Constructions',t:'resi',sc:[3,3,5,3,3],warm:false,
+  spec:{s:'open',txt:'Sarovar Zicon (₹1.5 Cr): "Kohler or equivalent"; CP "reputed make". Aparna One (ultra-luxury): Fantini, Gessi, Grohe or equivalent.',u:'https://ysrealty.co.in/property/aparna-sarovar-zicon/'},
+  scale:'One of Hyderabad\'s largest developers with its own building-materials businesses (uPVC windows, tiles, RMC).',
+  why:'Mid-premium specs are open; its in-house materials culture means procurement will test the economics hard, which suits a cost story.',
+  entry:'Mid-premium phases (Sarovar line); avoid Aparna One-type specs.',
+  src:[L('Sarovar Zicon spec','https://ysrealty.co.in/property/aparna-sarovar-zicon/'),L('Aparna One spec','https://yellowsquarerealty.com/property/aparna-one/')]},
+ {n:'Vasavi Group',t:'resi',sc:[2,4,5,4,3],warm:false,
+  spec:{s:'open',txt:'Lake City, Hafeezpet (₹79 L+): sanitary "TOTO, Kohler, Vitra or equivalent"; CP "chrome plated", no brand.',u:'https://www.homznspace.com/vasavi-lake-city-hafeezpet-hyderabad-reviews/'},
+  scale:'Hyderabad mid-market developer; Lake City is a large multi-tower phase.',
+  why:'Mid-priced towers with an unbranded CP line: the easiest spec to enter in the pilot city.',
+  entry:'Essential and Premier kit mix across one tower; show flat.',
+  src:[L('Lake City spec','https://www.homznspace.com/vasavi-lake-city-hafeezpet-hyderabad-reviews/')]},
+ {n:'My Home Group',t:'resi',sc:[3,2,5,3,2],warm:false,
+  spec:{s:'none',txt:'Apas, Kokapet: EWC "of reputed brand"; faucets "chrome plated by reputed brands".',u:'https://myhomeconstructions.com/my-home-apas-lp/'},
+  scale:'Large Hyderabad developer (Kokapet, Tellapur); premium positioning.',
+  why:'Unbranded spec but premium buyers; the finish and the Atelier credential matter more than price here.',
+  entry:'HUE and SENSE in a later phase once two local references exist.',
+  src:[L('Apas spec','https://myhomeconstructions.com/my-home-apas-lp/')]},
+ {n:'Casagrand',t:'resi',sc:[3,3,4,4,5],warm:true,
+  spec:{s:'open',txt:'Aristo, Alandur (Chennai): "All CP and sanitary fittings will be Kohler/Roca or equivalent".',u:'https://www.casagrand.co.in/ongoing-projects/aristo-3bhk-apartments-in-alandur/'},
+  scale:'Chennai-based developer active across Chennai, Bengaluru, Coimbatore and Hyderabad. Named BirlaNu client (Aerocon).',
+  why:'Warm account with open mid-market specs in two of the three South cities.',
+  entry:'FY29 South phase lead; introduce through the BirlaNu account owner with the bundle offer.',
+  src:[L('Aristo spec','https://www.casagrand.co.in/ongoing-projects/aristo-3bhk-apartments-in-alandur/'),L('BirlaNu client list','https://birlanu.com/walls')]},
+ {n:'Mahindra Lifespaces',t:'resi',sc:[2,3,3,4,5],warm:true,
+  spec:{s:'open',txt:'Luminare (luxury): "Toto, Grohe or equivalent"; servant toilet "Jaquar, Hindware or equivalent".',u:'https://api.anarock.com/uploads/projects/mahindra-luminare-downloadbrochure-1571828601791.pdf'},
+  scale:'FY26 pre-sales ₹3,400 Cr; FY27 estimate ₹4,800 Cr (+41%). Green-building positioning. Named BirlaNu client.',
+  why:'Warm, growing, sustainability-led; a water-efficiency story (IS 17650-2) lands well. Secondary bathrooms are the entry even in luxury.',
+  entry:'Year 1 lead candidate: one Chennai or Pune phase with the Essential kit in secondary bathrooms and Premier in masters.',
+  src:[L('Luminare spec','https://api.anarock.com/uploads/projects/mahindra-luminare-downloadbrochure-1571828601791.pdf'),L('BirlaNu client list','https://birlanu.com/walls'),L('Pre-sales','https://therealtytoday.com/news/market-insights/top-11-developers-defy-global-headwinds-inr-18-lakh-cr-pre-sales-targeted-in-fy27/')]},
+ {n:'Sobha',t:'resi',sc:[3,2,4,2,2],warm:false,
+  spec:{s:'none',txt:'Insignia: "sanitary fixtures of reputed make"; "chromium-plated fittings". Sobha gives Jaquar a testimonial ("we have been using Jaquar products").',u:'https://www.jaquar.com/en/ReviewDetails/1/about:blank'},
+  scale:'FY26 pre-sales ₹8,135 Cr; FY27 estimate ₹10,600 Cr. Bengaluru-based with in-house construction and interiors.',
+  why:'Backward-integrated builder with a public Jaquar relationship; harder to switch.',
+  entry:'South-phase target after references; lead with cost and the single-supplier bundle.',
+  src:[L('Insignia brochure','https://doc.squareyards.com/ProjectKnowledge/Brochure_d35894456348457b88ac0165ca585713.pdf'),L('Jaquar testimonial','https://www.jaquar.com/en/ReviewDetails/1/about:blank')]},
+ {n:'Godrej Properties',t:'resi',sc:[5,3,3,2,2],warm:false,
+  spec:{s:'open',txt:'Godrej 24, Pune: CP "Jaquar or equivalent"; sanitaryware "Jaquar, Parryware or equivalent".',u:'https://www.godrejproperties.com/backoffice/data_content/projects/godrej_24_pune/landing_page/pdf/godrej-24-e-catalogue.pdf'},
+  scale:'FY26 pre-sales ₹34,171 Cr, the largest listed developer. Standardised specs across cities.',
+  why:'Open spec and the biggest book, but a national procurement office needs references first.',
+  entry:'FY30 with Pune or NCR, after South references; approach the regional procurement head.',
+  src:[L('Godrej 24 catalogue','https://www.godrejproperties.com/backoffice/data_content/projects/godrej_24_pune/landing_page/pdf/godrej-24-e-catalogue.pdf'),L('FY26 pre-sales','https://www.business-standard.com/')]},
+ {n:'Signature Global',t:'resi',sc:[3,5,1,4,3],warm:false,
+  spec:{s:'open',txt:'Park II and Park-I Ext (HRERA): sanitaryware and CP fittings "ISI MARKED" only. De-Luxe DXP (luxury): "GROHE/KOHLER/JAQUAR/TOTO or equivalent".',u:'https://haryanarera.gov.in/view_project/project_preview_open/1472'},
+  scale:'FY26 pre-sales ₹8,250 Cr; FY27 estimate ₹10,000 Cr. Gurugram affordable and mid-income leader.',
+  why:'An ISI-marked spec is the clearest open door for a certified polymer CORE kit. NCR, so a FY30 market.',
+  entry:'Volume test outside the South in FY30: Essential kit across an affordable phase.',
+  src:[L('HRERA spec, Park II','https://haryanarera.gov.in/view_project/project_preview_open/1472'),L('De-Luxe DXP','https://www.signatureglobal.in/signatureglobal-deluxe/pdf/De-Luxedxp-2024.pdf')]},
+ {n:'Lodha',t:'resi',sc:[4,2,1,2,2],warm:false,
+  spec:{s:'open',txt:'Golden Ticket, Mira Road: "Jaquar/Kohler/Roca" with "or equivalent" footnote. Lodha Bellezza used GROHE (GROHE reference).',u:'https://apnagharapnadesh.lodhagroup.in/projects/residential-property-in-mira-road/golden-ticket/amenities'},
+  scale:'FY26 pre-sales ₹20,530 Cr. Mumbai-led with a growing Pune and Bengaluru presence.',
+  why:'Open spec at the mid tier; premium mix overall. FY31 (MMR) market.',
+  entry:'Later phase; approach with Pune references.',
+  src:[L('Golden Ticket spec','https://apnagharapnadesh.lodhagroup.in/projects/residential-property-in-mira-road/golden-ticket/amenities'),L('GROHE at Bellezza','https://corporate.grohe.com/en/corporate/references/residential/lodha-bellezza.html')]},
+ {n:'DLF',t:'resi',sc:[3,1,1,3,5],warm:true,
+  spec:{s:'none',txt:'Garden City Enclave floors: "Conventional CP fittings, white chinaware"; make at promoter\'s discretion.',u:'https://dlf.in/homes/premium/gardencityenclave/independent-floors-phase-2/pdf/Specifications.pdf'},
+  scale:'FY26 pre-sales ₹20,143 Cr. NCR luxury focus; over 55% of NCR launches above ₹2.5 Cr. Named BirlaNu client.',
+  why:'Warm, and the spec leaves the make to the promoter, but the product mix is luxury. A FY30 NCR credential, not Year 1 volume.',
+  entry:'Independent-floor and mid phases in FY30 through the BirlaNu account; Atelier conversation later.',
+  src:[L('DLF spec','https://dlf.in/homes/premium/gardencityenclave/independent-floors-phase-2/pdf/Specifications.pdf'),L('BirlaNu client list','https://birlanu.com/walls')]},
+ {n:'M3M',t:'resi',sc:[3,2,1,3,5],warm:true,
+  spec:{s:'unknown',txt:'HRERA form for M3M Jewel lists sanitaryware and CP fittings as "N.A."; no brochure spec found.',u:'https://haryanarera.gov.in/view_project/project_preview_open/2185'},
+  scale:'Large Gurugram developer across luxury and mid segments. Named BirlaNu client.',
+  why:'Warm NCR account; spec unknown. Worth a conversation when NCR opens in FY30.',
+  entry:'Ask the BirlaNu account owner for the procurement contact; qualify the spec before any pitch.',
+  src:[L('HRERA, M3M Jewel','https://haryanarera.gov.in/view_project/project_preview_open/2185'),L('BirlaNu client list','https://birlanu.com/walls')]},
+ {n:'Raheja and Appaswamy',t:'resi',sc:[2,3,3,3,5],warm:true,
+  spec:{s:'unknown',txt:'No public specification sheet found for either.',u:'https://birlanu.com/walls'},
+  scale:'Raheja (Mumbai and NCR) and Appaswamy (Chennai) are both named BirlaNu Aerocon clients.',
+  why:'Warm routes in Chennai (FY29) and Mumbai (FY31). Appaswamy is the nearer one.',
+  entry:'Qualify Appaswamy\'s Chennai phases for FY29 through the BirlaNu account owner.',
+  src:[L('BirlaNu client list','https://birlanu.com/walls')]},
+ {n:'Shriram, Sumadhura, Ramky (Bengaluru)',t:'resi',sc:[3,3,5,4,3],warm:false,
+  spec:{s:'open',txt:'Ramky One Karnival: "Cera / Hindware / Kohler / Jaquar or equivalent". Sumadhura Folium: CP "Grohe or equivalent". Shriram Chirping Woods is fixed (Jaquar Florentine and Lyric).',u:'https://www.homznspace.com/ramky-one-karnival-ecity-reviews/'},
+  scale:'Mid-market Bengaluru developers with multi-tower phases in the ₹80 L to 2.5 Cr bands.',
+  why:'The Bengaluru equivalents of the Hyderabad locals: open specs, reachable procurement, FY29 timing.',
+  entry:'Ramky and Sumadhura in FY29; Shriram only where the spec is open.',
+  src:[L('Ramky spec','https://www.homznspace.com/ramky-one-karnival-ecity-reviews/'),L('Sumadhura spec','https://www.homznspace.com/sumadhura-folium-phase-2-whitefield/'),L('Shriram brochure','https://www.slideshare.net/slideshow/shriram-chirping-woods-brochure-zrickscom/65706194')]},
+ {n:'Gaurs Group (NCR)',t:'resi',sc:[3,2,1,2,1],warm:false,
+  spec:{s:'fixed',txt:'MoU with GROHE (Jul 2026) to specify GROHE across about 40,000 NCR homes over four years.',u:'https://therealtytoday.com/news/interiors/grohe-and-gaurs-group-signs-mou-to-integrate-bathroom-solutions-across-40000-homes'},
+  scale:'Large NCR mid-market developer.',
+  why:'Closed for now, but the MoU is the template for NuFlow\'s "expand" step: a framework across a developer\'s whole book.',
+  entry:'None. Use as the reference model when pitching frameworks to warm accounts.',
+  src:[L('GROHE–Gaurs MoU','https://therealtytoday.com/news/interiors/grohe-and-gaurs-group-signs-mou-to-integrate-bathroom-solutions-across-40000-homes')]},
+ /* ---- hotel owners ---- */
+ {n:'PRISM (OYO)',t:'owner',sc:[4,5,5,4,2],warm:false,
+  spec:{s:'unknown',txt:'No published fit-out specification for OYO-serviced hotels.',u:'https://www.bizzbuzz.news/industry/hospitality/prism-plans-to-add-300-hotels-1386189'},
+  scale:'300 company-serviced hotels planned across Telangana and Andhra Pradesh: Hyderabad, Warangal, Karimnagar, Khammam (Feb 2026).',
+  why:'The closest match to the pilot region and to a value-led kit. Key counts and ownership terms were not stated.',
+  entry:'Offer a CORE and SAFE room bundle to partner hotel owners through the regional head, with a warranty rather than a price cut.',
+  src:[L('Bizz Buzz, Feb 2026','https://www.bizzbuzz.news/industry/hospitality/prism-plans-to-add-300-hotels-1386189')]},
+ {n:'Samhi Hotels',t:'owner',sc:[4,3,3,4,2],warm:false,
+  spec:{s:'unknown',txt:'No published supplier reference.',u:'https://trendlyne.com/ipo/detail/1216/samhi-hotels-ltd/'},
+  scale:'25 hotels, 3,839 keys across 12 cities at IPO; upper-midscale branded assets (Marriott, Hyatt, IHG brands).',
+  why:'An asset-management platform that refurbishes often. Brand standards apply to guest rooms.',
+  entry:'Refurbishment and back-of-house packages to its asset team.',
+  src:[L('Trendlyne IPO page','https://trendlyne.com/ipo/detail/1216/samhi-hotels-ltd/')]},
+ {n:'Apeejay Surrendra Park Hotels',t:'owner',sc:[3,2,3,3,2],warm:false,
+  spec:{s:'unknown',txt:'No published supplier reference.',u:'https://stockviz.github.io/reports01/index/industry/rp-HotelsResorts.html'},
+  scale:'Pipeline of 35 hotels and about 2,450 keys (secondary summary; verify against filings).',
+  why:'Mid-sized owner-operator with its own brands (The Park, Zone), so no global standard blocks a spec.',
+  entry:'Approach through its projects and procurement team.',
+  src:[L('Sector summary','https://stockviz.github.io/reports01/index/industry/rp-HotelsResorts.html')]},
+ {n:'Chalet Hotels',t:'owner',sc:[4,1,4,2,1],warm:false,
+  spec:{s:'ref',txt:'Marriott properties publish Jaquar/Artize references (Marriott Coorg, Ritz-Carlton Udaipur, Westin Nashik).',u:'https://artize.com/in/projects'},
+  scale:'3,389 operating keys; target about 5,500 by FY30. Ritz-Carlton Hyderabad: 330 keys, FY29.',
+  why:'Luxury assets on global brand standards with Artize already referenced. Back-of-house only.',
+  entry:'Staff areas and back-of-house after a brand-standard check.',
+  src:[L('Artize projects','https://artize.com/in/projects'),L('Chalet FY26','https://www.constructionworld.in/amp/policy-updates-and-economic-news/chalet-hotels-posts-strong-fy26-results/91789')]},
+ {n:'Juniper Hotels (Saraf and Hyatt)',t:'owner',sc:[3,1,2,2,1],warm:false,
+  spec:{s:'ref',txt:'Grand Hyatt Gurgaon (442 keys) published as a TOTO project; a Hyatt is also a Jaquar reference.',u:'https://www.toto.com/project/pdf/GRAND-HYATT-GURGAON.pdf'},
+  scale:'7 hotels, 1,895 keys; target about 3,900 keys by FY31; Dwarka Delhi about 550 keys.',
+  why:'Luxury Hyatt-linked owner with TOTO and Jaquar references. Low fit.',
+  entry:'Back-of-house only.',
+  src:[L('TOTO project sheet','https://www.toto.com/project/pdf/GRAND-HYATT-GURGAON.pdf'),L('Juniper release','https://nsearchives.nseindia.com/corporate/9930371292_14082026162844_PressRelease-DDAsigned.pdf')]},
+ {n:'Ventive Hospitality (Panchshil)',t:'owner',sc:[3,2,1,3,1],warm:false,
+  spec:{s:'unknown',txt:'No published supplier reference.',u:'https://costar.com/article/1819809320/indian-hotel-firm-ventive-hospitality-seeks-ipo'},
+  scale:'2,036 keys (Mar 2024); aims for about 4,000 by FY30. Pune-led luxury and upscale.',
+  why:'Real estate parent (Panchshil) builds homes too; a FY30 Pune conversation.',
+  entry:'Via the Panchshil residential arm in FY30.',
+  src:[L('Hotel News Now','https://costar.com/article/1819809320/indian-hotel-firm-ventive-hospitality-seeks-ipo')]},
+ /* ---- hotel brands ---- */
+ {n:'Lemon Tree Hotels',t:'brand',sc:[5,4,3,3,2],warm:false,
+  spec:{s:'unknown',txt:'No published bathware supplier for Lemon Tree, Keys or Red Fox. Open ground.',u:'https://nsearchives.nseindia.com/corporate/LEMONTREE_13042026205720_LTHL_Press_Release_Signed.pdf'},
+  scale:'269 hotels: 131 operating, 138 in the pipeline (Mar 2026). 56 signings in FY26. Asset-light, franchise-led.',
+  why:'Largest count of midscale and economy projects; owners and franchisees buy the fittings. Also absorbing unbranded hotels into its system.',
+  entry:'Franchise owners and project consultants for Keys and Lemon Tree hotels; ask about the approved-vendor process.',
+  src:[L('Lemon Tree FY26 release','https://nsearchives.nseindia.com/corporate/LEMONTREE_13042026205720_LTHL_Press_Release_Signed.pdf')]},
+ {n:'Radisson Hotel Group',t:'brand',sc:[5,3,4,3,2],warm:false,
+  spec:{s:'ref',txt:'Radisson Blu New Delhi and Delhi Airport are Jaquar/Artize references. Owner-driven brands (Radisson Individuals, Park Inn) are open.',u:'https://artize.com/in/projects'},
+  scale:'157–160 hotels and 19,000–19,500 keys by Dec 2026; target 500 hotels by 2030. Two Hyderabad projects (300 and 160 keys) listed for Q2 2026 with no opening found.',
+  why:'Strong Tier 2 and 3 push with owner-funded hotels; the upscale end references Jaquar.',
+  entry:'Owners of Radisson Individuals, Park Inn and Tier 2 Radisson hotels; confirm the Hyderabad project status first.',
+  src:[L('Artize projects','https://artize.com/in/projects'),L('Outlook Business','https://www.outlookbusiness.com/corporate/radisson-aims-160-hotels-19500-keys-in-india-by-end-2026-co-executive')]},
+ {n:'IHCL (Ginger, Tree of Life, Taj)',t:'brand',sc:[5,3,4,2,1],warm:false,
+  spec:{s:'ref',txt:'Taj palaces and Taj West End are Artize/Jaquar references; Duravit lists IHCL at chain level. Nothing published for Ginger.',u:'https://artize.com/in/projects'},
+  scale:'628-hotel portfolio with a 255-hotel pipeline. Ginger is the value brand with a South India framework.',
+  why:'Taj is closed; Ginger is the opening, through its framework partners and owners.',
+  entry:'Ginger framework partners; ask for the brand-standard fittings route.',
+  src:[L('Artize projects','https://artize.com/in/projects'),L('IHCL','https://www.ihcltata.com/press-room/ihcl-on-accelerated-growth-path-in-h1-fy-2026')]},
+ {n:'ITC Hotels (Welcomhotel, Fortune, Storii)',t:'brand',sc:[4,3,2,3,1],warm:false,
+  spec:{s:'ref',txt:'Duravit lists ITC at chain level (ceramics). Named owner-partners: Sandy Resort (Shirdi 73 keys, Bhubaneswar 84 keys), Bhauram Jodhraj (Guwahati 43-key Storii).',u:'https://bwhotelier.com/article/duravit-perfect-bathroom-solutions-421558'},
+  scale:'33 hotels and 3,300+ keys signed in FY26; 67 managed hotels and about 6,700 keys in the pipeline; 2030 target of 200–220 hotels.',
+  why:'Welcomhotel, Fortune and Storii are owner-funded, mid-market and Tier 2. The named owners are project-level leads.',
+  entry:'Approach the named owner-partners directly; ITC luxury brands are out of scope.',
+  src:[L('Duravit hospitality','https://bwhotelier.com/article/duravit-perfect-bathroom-solutions-421558'),L('ITC owner agreements','https://www.itchotels.com/'),L('Business Standard','https://www.business-standard.com/companies/news/itc-hotels-first-agm-post-demerger-2030-expansion-targets-125081101578_1.html')]},
+ {n:'The Leela',t:'brand',sc:[2,1,3,1,1],warm:false,
+  spec:{s:'ref',txt:'Leela Kovalam is a GROHE reference (Sinfonia, Rainshower).',u:'https://archello.com/project/the-leela'},
+  scale:'15 operating hotels, 4,162 keys; 10 in the pipeline, 1,095 keys.',
+  why:'Pure luxury with GROHE on record. A standards conversation, not volume.',
+  entry:'None for now. Revisit Atelier once there is a live reference.',
+  src:[L('Archello, Leela Kovalam','https://archello.com/project/the-leela'),L('Leela investor presentation','https://nsearchives.nseindia.com/corporate/THELEELA_31072026141131_Investorpresentation.pdf')]},
+ {n:'EIH (Oberoi, Trident)',t:'brand',sc:[2,1,3,1,1],warm:false,
+  spec:{s:'ref',txt:'Rajvilas, Vanyavilas and The Oberoi Mumbai are Jaquar/Artize references.',u:'https://www.jaquar.com/en/testimonials-detail'},
+  scale:'Pipeline of 30 hotels and about 2,450 keys over 3–4 years.',
+  why:'Luxury and upper-upscale with Jaquar on record. Low fit.',
+  entry:'None for now.',
+  src:[L('Jaquar testimonials','https://www.jaquar.com/en/testimonials-detail'),L('EIH Q4 FY26','https://www.arthneeti.com/insights/eih-ltd-q4-fy26-earnings')]},
+ /* ---- contractors ---- */
+ {n:'Larsen & Toubro and Tata Projects',t:'epc',sc:[5,3,4,3,5],warm:true,
+  spec:{s:'unknown',txt:'Brand is set by the client spec; the contractor buys to it. Both are named BirlaNu clients.',u:'https://birlanu.com/walls'},
+  scale:'India\'s largest EPC contractors across housing, hospitals, campuses and public buildings.',
+  why:'They execute plumbing packages on institutional and government projects where an IS-marked, unbranded spec is common.',
+  entry:'Approved-vendor listing with the procurement and MEP teams; institutional projects (hostels, hospitals) before towers.',
+  src:[L('BirlaNu client list','https://birlanu.com/walls')]},
+ {n:'Shirke and Ahluwalia Contracts',t:'epc',sc:[4,3,3,3,5],warm:true,
+  spec:{s:'unknown',txt:'Brand set by client spec. Both named BirlaNu clients.',u:'https://birlanu.com/walls'},
+  scale:'Large building contractors (Shirke in mass housing and precast, Ahluwalia in institutional and residential).',
+  why:'Mass-housing and institutional packages suit the Essential kit; the contractor relationship already exists.',
+  entry:'Plumbing-package introductions; sample bathroom at a live site.',
+  src:[L('BirlaNu client list','https://birlanu.com/walls')]},
+ /* ---- designers ---- */
+ {n:'Prashant Deshmukh & Associates, Modarch, Murty & Manyam, Hiten Sethi',t:'design',sc:[2,3,4,5,5],warm:true,
+  spec:{s:'unknown',txt:'Published testimonials for BirlaNu Aerocon; PDA reports a relationship since 2008.',u:'https://birlanu.com/walls'},
+  scale:'Practices with institutional, educational and commercial work; Murty & Manyam is Hyderabad-based.',
+  why:'Architects who already trust a BirlaNu product are the first readers of the Product Intelligence pack.',
+  entry:'First four HUE sample visits and spec-pack reviews; ask for one project each to specify.',
+  src:[L('BirlaNu testimonials','https://birlanu.com/walls')]},
+ {n:'Morphogenesis',t:'design',sc:[3,3,4,4,2],warm:false,
+  spec:{s:'unknown',txt:'Designed ITC Grand Bharat (Gurgaon) and Avasa Hotel (Hyderabad).',u:'https://studiolotusdelhi.blogspot.com/2023/04/top-5-architecture-firms-that-are.html'},
+  scale:'Delhi studio with hotel and large residential work, including a Hyderabad hotel.',
+  why:'Architects specify materials; a Hyderabad hotel reference matters for the pilot.',
+  entry:'Designer catalogue and sample visit.',
+  src:[L('Studiolotus list','https://studiolotusdelhi.blogspot.com/2023/04/top-5-architecture-firms-that-are.html')]},
+ {n:'Sanjay Puri, DSP Design, Hafeez Contractor, Studio Lotus',t:'design',sc:[3,2,2,3,1],warm:false,
+  spec:{s:'unknown',txt:'Hotel and residential tower practices (Radisson Blu Goa, Grand Hyatt Goa, Hilton Chennai, Taj Exotica).',u:'https://studiolotusdelhi.blogspot.com/2023/04/top-5-architecture-firms-that-are.html'},
+  scale:'National practices with upscale hotel references.',
+  why:'Useful for HUE and Atelier conversations from FY30; not Year 1.',
+  entry:'Studio visits with the Atelier capsule once it exists.',
+  src:[L('Studiolotus list','https://studiolotusdelhi.blogspot.com/2023/04/top-5-architecture-firms-that-are.html')]},
+ /* ---- advisors, platforms ---- */
+ {n:'Brick&Bolt, Infra.Market IVAS, Arisinfra',t:'adv',sc:[3,4,4,4,2],warm:false,
+  spec:{s:'unknown',txt:'Brick&Bolt supplies Parryware, Jaquar, Hindware, Kohler and GROHE to its homes; IVAS has 10,000+ touchpoints; Arisinfra fulfils ₹300 Cr a year of sanitaryware.',u:'https://www.bricknbolt.com/building-materials-supply/sanitary-ware'},
+  scale:'Construction procurement platforms across Bengaluru, Hyderabad, Chennai, NCR, Pune and Mumbai.',
+  why:'They aggregate contractor demand and list brands; a route to many small projects after references exist.',
+  entry:'Listing and bulk terms in Year 2.',
+  src:[L('Brick&Bolt','https://www.bricknbolt.com/building-materials-supply/sanitary-ware'),L('Infra.Market IVAS','https://prnewswire.com/in/news-releases/inframarket-appoints-atul-sanghvi-as-chief-operating-officer-for-tiles-bath-fittings--sanitaryware-302005846.html'),L('Arisinfra','https://www.nbmcw.com/news/arisinfra-partners-with-the-house-of-w-to-boost-rs300-cr-sanitaryware-supply.html')]},
+ {n:'India Gully (HORECA procurement)',t:'adv',sc:[3,4,3,4,1],warm:false,
+  spec:{s:'unknown',txt:'Publishes mid-scale hotel economics: ₹34–49 lakh per key all-in; FF&E and OS&E ₹5.6–7.5 lakh per key (80-key Tier 2 model).',u:'https://indiagully-git-hub2.pages.dev/insights/greenfield-midscale-hotels'},
+  scale:'Procurement advisor to small and mid-scale hotel owners.',
+  why:'Sits where owners source fit-out items; a route to many small hotels.',
+  entry:'Bathroom package for its mid-scale clients.',
+  src:[L('India Gully','https://indiagully-git-hub2.pages.dev/insights/greenfield-midscale-hotels')]},
+ {n:'HVS Anarock, JLL, Hotelivate, Horwath',t:'adv',sc:[2,2,2,3,1],warm:false,
+  spec:{s:'unknown',txt:'Source the pipeline, cost and city data used here.',u:'https://www.asianhospitality.com/india-hotel-growth-costs-returns-report/'},
+  scale:'Hotel advisory and research firms; owners and investors read their reports.',
+  why:'They do not buy fittings; they introduce owners and set cost expectations.',
+  entry:'Share project data; meet advisory teams for introductions.',
+  src:[L('Hotelivate-Savills cost report','https://www.asianhospitality.com/india-hotel-growth-costs-returns-report/'),L('HVS Anarock July 2026','https://www.hvs.com/Print/HVS-ANAROCK-MONITOR-July-2026?id=10526')]}
+];
+
+const WCFG=[['wv','Volume',25],['wf','Polymer fit',25],['ws','South reach',20],['wa','Access',15],['ww','Warmth',15]];
+const W={wv:25,wf:25,ws:20,wa:15,ww:15};
+let pfilter='all';
+
+/* BirlaNu clients */
+const CLIENTS=[
+ ['DLF','Home developer','NCR','Developer phases (FY30); unbranded spec'],
+ ['M3M','Home developer','NCR','Developer phases (FY30); spec not published'],
+ ['Mahindra Lifespaces','Home developer','Chennai, Pune, NCR','Year 1 candidate; secondary bathrooms in luxury, full kit in mid'],
+ ['Casagrand','Home developer','Chennai, Bengaluru, Hyderabad','FY29 South phase; open spec (Kohler/Roca or equivalent)'],
+ ['Raheja','Home developer','Mumbai, NCR','FY31 MMR'],
+ ['Appaswamy','Home developer','Chennai','FY29 Chennai'],
+ ['GAAR','Developer / infrastructure','–','Qualify'],
+ ['Larsen & Toubro','EPC contractor','National','Approved-vendor listing; institutional plumbing packages'],
+ ['Tata Projects','EPC contractor','National','Approved-vendor listing; hospitals, campuses'],
+ ['Shirke','Contractor / precast housing','Maharashtra','Mass-housing packages, Essential kit'],
+ ['Ahluwalia Contracts','Contractor','National','Institutional and residential packages'],
+ ['Yashoda Hospital','Healthcare','Hyderabad','SAFE and CORE for wards and staff areas; pilot-city institution'],
+ ['SRM','Education','Chennai, Andhra','Hostel bathrooms at scale'],
+ ['IIM Jammu','Education','Jammu','Hostel reference'],
+ ['Aurobindo','Corporate / pharma','Hyderabad','Plant and office amenities; pilot-city institution'],
+ ['Airports Authority of India','Government','National','Public-building spec; IS-marked tender route']
+];
+
+/* channel table */
+const CHANNELS=[
+ ['Trade distributors → dealers → retailers','Bulk of retail; organised brands hold 60% of faucets','Retailer counter and the plumber','Company → distributor → dealer → retailer; 25–40% off MRP at retail; Cera gross margin 52–55%','Reach model: BirlaNu plumbing dealers (200 in Y1 → 850), CORE and SAFE pull-through','Jaquar leads North, West, Central; Cera North, West, Kerala, Karnataka; Parryware TN and East; Hindware East, South, West'],
+ ['Retail: brand experience centres and multi-brand studios','Small volume, high specification influence','Architect, interior designer, affluent homeowner','Low discount, premium; dealer-owned galleries and hubs','Premium bath studios (80 → 380) for HUE and SENSE; own centre in Hyderabad Y2','Metros only; Hyderabad now has Kohler, Roca and Hindware centres'],
+ ['Builder / contractor direct (projects)','≈40% of organised sales (Cera 39%, Jaquar ~40%); Mordor 26–70% depending on scope','Developer procurement and architect set the brand; MEP or plumbing contractor executes','Price book, unpublished project rates (trade lore 40–60% off MRP); project margins 6–7 pts below retail (Cera)','Lead channel: developer phases, hotels, institutions; kits at 30–35% off ceiling','North strongest for projects; South fastest-growing; Telangana under-served'],
+ ['E-commerce: marketplaces and brand D2C','Not disclosed; online faucet sales growing ~9% a year','Replacement and DIY buyer','Marketplace fees ~15%; Hindware and Jaquar sell via Amazon, no D2C checkout','Spares, HUE inserts, health faucets; never below dealer street price','Pan-India; Tier 2 and 3 reach'],
+ ['Showroom dealers and the plumber layer','Indirect but decisive at the point of install','Plumber recommends; dealer stocks','QR points, DBT cash, insurance (Prince 1.5 lakh, Parryware and Hindware 1 lakh each)','QR-verified install rewards with zero-callback condition; 300 fitters trained before launch','Every cluster; pipe brands already own the plumber relationship']
+];
+
+/* heat grid: regions × brands, 0-3 */
+const HEAT={regions:['North','West','Central','South (ex-TN)','Tamil Nadu','Kerala','Telangana / AP','East'],brands:['Jaquar','Cera','Hindware','Parryware','Kohler / GROHE'],
+ v:[[3,2,1,1,2],[3,2,2,1,2],[2,1,1,2,1],[2,2,2,1,2],[2,1,2,3,1],[2,3,1,1,1],[2,0,2,1,2],[1,1,3,2,1]]};
+
+/* network sizes */
+const NETS=[['Astral (all categories)',270000,'dealers'],['Cera',32000,'dealers and distributors'],['Hindware',25000,'dealers'],['Parryware',22000,'dealers and retailers'],['Truflo by Hindware (PTMT)',20000,'retail outlets'],['BirlaNu',5937,'dealers receiving sales'],['Jaquar',4000,'dealers (2020); 800 showrooms'],['Hindware distributors',400,'distributors']];
+
+/* personas */
+const PERSONAS=[
+ {t:'Developer procurement head',q:'"Will it pass the architect, land on time and cost less per bathroom?"',b:['Kit price book at 30% off, fixed for the phase','IS marks, test reports and a 5-year parts warranty in one equivalence file','Supply dates the OEM has committed to; one invoice with pipes and chemicals']},
+ {t:'Architect / interior designer',q:'"Does it look and feel like the brand I would have specified?"',b:['Product Intelligence pack: 3D anatomy, material map, CAD/BIM','HUE colour inserts and PVD finishes; Atelier collaborations from FY30','Open cut-away and QR passport, so the spec is defensible']},
+ {t:'MEP / plumbing contractor',q:'"Will my team install it right, first time?"',b:['Front-serviceable modules; standard connections','25-person fitter training before first delivery','Parts hotline and a 53-depot supply footprint']},
+ {t:'Hotel owner / facility manager',q:'"What does a room cost me over ten years?"',b:['Lifecycle cost per room; module swaps in minutes','Longer warranty offered before a deeper discount','SENSE for wet areas; NIGHTGLOW for corridors and staff areas']},
+ {t:'Developer sales team',q:'"Does the show flat sell?"',b:['Sample flat with the Premier kit installed','Buyer-facing QR passport (what is in the wall, what it was tested against)','A recognisable, warrantied brand story for the buyer brochure']},
+ {t:'BirlaNu account owner',q:'"Does this help or hurt my pipe account?"',b:['Bundle adds revenue per site without a new buyer','Shared warranty desk and site team','3% commission for the field force on verified kit sales']}
+];
+
+/* ---------- slides: one headline and notes per tab ---------- */
+const SLIDES={
+ answer:{h:'Enter through the specification: developers carry the volume, hotels earn the credibility, BirlaNu opens the door.',
+  b:['Institutional CP-fittings pool (TAM) {TAM} per year; specifiable (SAM) {SAM}; FY30 project revenue (SOM) {SOM}','19 of 27 developer specs say "or equivalent" and 6 name no brand: the gate is an equivalence approval, not a tie-up','Branded hotels reference Jaquar/Artize, TOTO, GROHE and Duravit; Lemon Tree, Ginger, OYO and Treebo publish nothing','No spec names polymer; incumbents place PTMT at the value end, so NuFlow\'s finish-led hybrid is the right B2B product','BirlaNu: 5,937 dealers, 90.7% of sales through them, 16 named clients incl. DLF, M3M, Mahindra Lifespaces, Casagrand, L&T, Tata Projects']},
+ market:{h:'Most of India builds its own house; developers build the specified bathroom.',
+  b:['78% of households live in independent houses (NSS); developers deliver roughly 10–15% of new dwellings but almost all specified, branded bathrooms','Top-7 launches 4.19 lakh (2025), 3.47 lakh in 9M 2026; 15 Tier 2 cities 1.36 lakh; PMAY partnership housing ≈1.8 lakh a year','69% of Q3 2026 launches are above ₹80 L; homes above ₹1 Cr are 55% of 9M 2026 sales','1.45 lakh RERA projects; 3,600–5,200 new top-7 projects a year; Year 1 needs 7','Bathware ₹33,100 Cr, faucets ₹20,190 Cr; replacement 20–25%, new construction 75–80%']},
+ channels:{h:'Five channels: projects set the spec, dealers and plumbers do the install, studios sell the finish.',
+  b:['Projects are ≈40% of organised faucet sales (Cera 39%, Jaquar ~40%): the launch engine','Pipe brands own the biggest networks (Astral 2.7 lakh, Prince 1.5 lakh plumbers) and already sell polymer taps through them','Incumbent strength by region: Jaquar North/West, Cera North/West/Kerala, Parryware TN, Hindware East; Telangana/AP is the gap','Experience centres: Kohler, Roca and Hindware have all opened in Hyderabad since 2024','Channel rules from the plan: price book, discount ceilings 30/35%, online never below dealer street price']},
+ birlanu:{h:'Behind the wall already: 16 named clients, 5,937 dealers, 53 depots, 64,921 plumber meets.',
+  b:['FY26 revenue ₹3,730 Cr consolidated; 30 plants at 19 locations; Hyderabad R&D centre; new plants near Hyderabad and Nellore','Warm developers: DLF, M3M, Mahindra Lifespaces, Casagrand, Raheja, Appaswamy; warm contractors: L&T, Tata Projects, Shirke, Ahluwalia','Institutions: Yashoda Hospital, SRM, IIM Jammu, Aurobindo, AAI; architects on record: PDA (since 2008), Modarch, Murty & Manyam, Hiten Sethi','Offer: one plumbing spec (pipes, valves, fittings, chemicals), one warranty, one site team, one invoice','Still needed: dealer master, customer-wise sales MIS, project register, top-50 customer report']},
+ partners:{h:'Rank partners on volume, polymer fit, South reach, access and warmth; lead with open specs in the pilot city.',
+  b:['Hyderabad locals with open specs: Rajapushpa, Aparna (mid), Vasavi, Prestige Golden Grove; Brigade for homes plus hotels','Warm Year 1 candidates: Mahindra Lifespaces, Casagrand; warm contractors L&T, Tata Projects, Shirke, Ahluwalia','Hotels: PRISM (OYO) 300 Telangana/AP hotels; Lemon Tree 138 pipeline; Radisson and ITC owner-partners in Tier 2','Closed for now: Puravankara Atmosphere-type shortlists, Gaurs (GROHE MoU), luxury chains with Jaquar/Artize, TOTO, GROHE references','First meeting, every partner: approved-vendor process and current bathware supplier']},
+ geography:{h:'Telangana first, then Bengaluru and Chennai; Pune and NCR in FY30; Tier 2 through dealers.',
+  b:['Top-7 launches 2025: MMR 1.26 lakh, Bengaluru 74k, Pune 68k, NCR 62k, Hyderabad 43k, Chennai 27k, Kolkata 19k','Hyderabad 2026 rebound: 9M launches 32,577 (+6%), Q3 sales +15%; 7,785 branded rooms, 2,692 proposed','71% of 2025 hotel signings in Tier 2 and 3; named owner-partners in Shirdi, Bhubaneswar, Guwahati','RERA projects: Maharashtra 50,162; Tamil Nadu 27,609; Gujarat 15,322; Telangana 8,227 (2023)','Radisson\'s two Hyderabad projects (460 keys) show no opening: confirm before counting them']},
+ numbers:{h:'TAM {TAM}, SAM {SAM}, SOM {SOM} (FY30): a defensible slice of a ₹20,190 Cr faucet market.',
+  b:['Homes top-7: 4.19 lakh launches × 85% fitted × 2.4 bathrooms × blended ₹14,620 per bathroom','Tier 2: 1.36 lakh × 85% × 2.2 × ₹9,000; hotels: 11,424 new rooms plus a tenth of 2.09 lakh stock at ₹18,900 blended (+15% public areas); PMAY partnership 1.8 lakh × ₹3,500','SAM = homes in ₹40 L–2.5 Cr bands (75%) with open specs (74% of sample); hotels economy to upper-midscale (70%)','SOM follows the plan\'s kits: FY28 7 phases + 6 hotels = ₹3.2 Cr; FY30 18 + 16 + 3 Atelier ≈ ₹8.8 Cr; FY32 ≈ ₹16 Cr','Top-down ceiling: organised project faucets ≈ ₹4,850 Cr; new-build ≈ ₹3,630 Cr']},
+ playbook:{h:'Spec-in, land, expand, pull through: institutional first, retail as the growth engine.',
+  b:['ICP: ₹80 L–2.5 Cr phases of 150+ units, open spec, fit-out 6–12 months out; 60–150-key midscale hotel owners; institutions already buying BirlaNu','Positioning: brass-brand finish and warranty at polymer-hybrid economics, from the company already behind the wall','Kits: Premier ₹11,445, Essential ₹4,268, Hotel ₹11,178, Atelier ₹31,330 realised; ceilings 30% developers, 35% hotels','Gates: G0 landed cost within 10%; G1 ≥5 phases and 4 hotels under PO with 20% advance by Mar 2027; 40 architect specs by Mar 2028','Sequence: Telangana FY28 (7 + 6) → South FY29 (12 + 10) → Pune/NCR FY30 (18 + 16 + 3 Atelier) → MMR, Kolkata, Tier 2 FY31–32']},
+ evidence:{h:'Every number carries a tag; assumed inputs are the first to challenge.',
+  b:['Sourced: Anarock, Knight Frank, PropEquity, NSS, PMAY, RERA, Anand Rathi, PL Capital, BOBCAPS, Cera and Hindware filings, BirlaNu BRSR, developer spec sheets, supplier project pages','Derived: bathrooms per home from price-band mix; open-spec share from 27 specs; project pool from faucet market × organised × project share','Assumed: fitted share 85%, per-bathroom prices by band, hotel per-key spend, replacement cycle, PMAY price','Unverified: luxury brand standards on polymer; exact project discount depth; Radisson Hyderabad status; Mordor vs IMARC scope differences']}
+};
+/* ---------- evidence log: [tag, area, fact, source, url] ---------- */
+const EV=[
+ /* housing structure */
+ ['src','Housing','89.0% of rural and 56.4% of urban households live in independent houses; own dwelling 96.0% rural, 63.8% urban; pucca 76.7% rural, 96.0% urban','NSS 76th round (2018) via Business Standard','https://business-standard.com/article/news-ani/96-0-pc-in-rural-63-8-pc-urban-area-households-have-their-own-dwelling-unit-nss-119112400868_1.html'],
+ ['der','Housing','≈78% of all households in independent houses (0.67 × 89 + 0.33 × 56.4); urban flats ≤ 44%','Calculated from NSS','#'],
+ ['src','Housing','PMAY-U sanctions: BLC 75 lakh (64%), CLSS 25 lakh (21%), AHP/ISSR 18 lakh (15%) of 118 lakh','MoHUA / PIB, Dec 2024','https://static.pib.gov.in/WriteReadData/specificdocs/documents/2024/dec/doc20241210468501.pdf'],
+ ['src','Housing','PMAY-U: 127.68 lakh sanctioned, 99.07 lakh completed (Jul 2026)','MoHUA via Aarch News','https://theaarchnews.com/?p=7670'],
+ ['src','Housing','PMAY-G: 3.92 crore sanctioned, 3.11 crore completed; 35.54 lakh completed in FY26 to June 2026; Phase II 2 crore more by Mar 2029','MoRD via Aarch News','https://theaarchnews.com/?p=7757'],
+ ['src','Housing','Housing is 55–57% of cement demand FY25: rural housing 32–34%, urban 22–24%','CRISIL (JSW Cement RHP)','https://www.jswcement.in/pdf/offer-documents/CRISIL_Industry_Report_Final-Signed.pdf'],
+ ['src','Housing','Urban owner-builders construct an estimated 0.6–1 million units a year, 8–14× organised affordable output','Urbanomics (author estimate from TG-bPASS data)','https://urbanomics.substack.com/p/indias-affordable-housing-policy'],
+ ['src','Housing','Urban housing shortage 5–7 crore units','NITI Aayog, Jan 2026, via Deccan Chronicle','https://www.deccanchronicle.com/southern-states/andhra-pradesh/niti-aayog-warns-of-urban-housing-shortage-in-india-worsening-1932697'],
+ ['der','Housing','PMAY-U partnership units ≈1.8 lakh a year = 18 lakh AHP/ISSR sanctions over ten years','Calculated','#'],
+ /* developer market */
+ ['src','Developer homes','Top 7 cities 2025: sales 3.95 lakh (−14%), launches 4.19 lakh (+2%), unsold 5.77 lakh, 21% of launches above ₹2.5 Cr','Anarock via Construction World','https://www.constructionworld.in/latest-construction-news/real-estate-news/housing-sales-fall-14-per-cent-in-top-cities-in-2025/83811'],
+ ['src','Developer homes','Top 7 launches 2026: Q1 1,26,265; Q2 1,06,000; Q3 1,14,320 (+18% YoY); unsold 6,30,590 at end Q3','Anarock via Realty Today / Outlook Money','https://therealtytoday.com/news/news/q3-2026-housing-sales-rise-3-y-o-y-in-top-7-cities-new-launches-up-18/'],
+ ['src','Developer homes','Top 7 launch mix Q3 2026: below ₹40 L 14%, ₹40–80 L 17%, ₹80 L–1.5 Cr 34%, ₹1.5–2.5 Cr 24%, above ₹2.5 Cr ≈11%; Q2: 6/19/27/25/22; Q1: 10/13/25/32/20','Anarock quarterly releases','https://therealtytoday.com/news/news/q3-2026-housing-sales-rise-3-y-o-y-in-top-7-cities-new-launches-up-18/'],
+ ['src','Developer homes','Top 8 cities H1 2026: sales 1,71,471; launches 1,87,350; unsold 5,25,695; homes above ₹1 Cr 54% of sales','Knight Frank India Real Estate H1 2026','https://content.knightfrank.com/research/3116/documents/en/india-real-estate-office-and-residential-market-h1-2026-12927.pdf'],
+ ['src','Developer homes','9M 2026 top 8: sales 2,58,238; launches 2,79,899 (+4%); above ₹1 Cr 55% of sales; ₹1–2 Cr the largest band at 30%','Knight Frank via Outlook Money','https://www.outlookmoney.com/invest/indias-residential-sales-hold-steady-in-9m-cy2026-as-market-divergence-widens-says-report'],
+ ['src','Developer homes','Homes above ₹1 Cr were 50% of 2025 sales; below ₹50 L fell from 37% (2022) to 21%','Knight Frank via NBM&CW','https://www.nbmcw.com/news/premium-homes-above-rs-1-crore-account-for-50-of-india-housing-sales-in-2025-knight-frank.html'],
+ ['src','Developer homes','City launches, sales, price mix and change by city, 2025','Anarock via Storyboard18','https://www.storyboard18.com/how-it-works/housing-sales-volume-falls-14-y-o-y-in-2025-but-sales-value-rises-6-in-top-7-cities-86615.htm'],
+ ['src','Developer homes','Listed and Grade A developer share of launches by city; FY26 pre-sales and FY27 estimates for 11 developers','Realty Today, Anarock data','https://therealtytoday.com/news/market-insights/top-11-developers-defy-global-headwinds-inr-18-lakh-cr-pre-sales-targeted-in-fy27/'],
+ ['src','Developer homes','FY26 bookings: Godrej ₹34,171 Cr; Prestige ₹30,024 Cr; Lodha ₹20,530 Cr; DLF ₹20,143 Cr; Signature Global ₹8,250 Cr; Sobha ₹8,135 Cr; Brigade ₹7,424 Cr; Puravankara ₹7,407 Cr','Business Standard / PTI, Jun 2026','https://www.business-standard.com/'],
+ ['src','Tier 2','15 Tier 2 cities 2025: sales 1,56,181 (−10%), launches 1,36,243 (−6%), value ₹1.48 lakh Cr; Ahmedabad 51,148 units (33%); Mohali launches +108%, Bhopal +66%; above ₹1 Cr 28% of sales','PropEquity via PropNewsTime','https://propnewstime.com/getdetailsStories/MjYzODY=/housing-sales-in-top-15-tier-2-cities-dip-10--in-2025-launches-fall-6--propequity'],
+ ['src','Tier 2','Q1 2025 Tier 2: Lucknow +25%, Coimbatore +21%, Gandhinagar +18%, Vizag −37%','PropEquity via Outlook Business','https://www.outlookbusiness.com/news/housing-sales-in-15-tier-ii-cities-dip-8-to-43781-units-in-jan-mar-propequity'],
+ ['src','Tier 2','FY26 land deals: 111 deals, 2,994+ acres; listed developers 49%; Tier 2/3 deals in Amritsar, Vadodara, Nagpur, Panipat, Mysore, Raipur, Coimbatore','Anarock via Realty Today','https://therealtytoday.com/news/market-insights/fy26-sees-111-land-deals-spanning-2994-acres-with-listed-developers-leading-nearly-half/'],
+ ['src','Projects','1,44,617 projects registered under all RERAs (May 2025); MahaRERA 50,162; Tamil Nadu 27,609; Gujarat 15,322','MoHUA via Free Press Journal','https://www.freepressjournal.in/amp/mumbai/maharera-becomes-first-in-india-to-register-over-50000-housing-projects-contributing-35-of-national-total'],
+ ['src','Projects','Top 10 RERA states: 1.19 lakh projects, 97.14 lakh units; average 81 units per project (UP 184, Gujarat 116)','PropEquity via Realty Today','https://therealtytoday.com/news/market-insights/119-lakh-projects-97-lakh-units-registered-in-8-years-across-top-10-rera-states-propequity-report/'],
+ ['src','Projects','MahaRERA approved 10,379 projects in FY26','Ghar.tv','https://www.ghar.tv/blog/maharera-real-estate-project-approvals-hit-10379-in-fy26/artid6357'],
+ ['src','Projects','Telangana RERA: 8,227 registered projects (Nov 2023)','Telangana Today','https://telanganatoday.com/telanganas-rera-records-significant-growth-in-project-registrations-case-disposal'],
+ ['der','Projects','3,600–5,200 new top-7 projects a year = 4.19 lakh launches ÷ 81–116 units per project','Calculated','#'],
+ /* bathware market */
+ ['src','Bathware market','Bathware ₹331 bn FY25: faucets ₹202 bn (61%), sanitaryware ₹129 bn; ~10% CAGR to FY29; replacement 20–25% of bathware demand, higher for faucets','Anand Rathi building materials thematic, Mar 2026','https://dsijpub.s3.ap-south-1.amazonaws.com/productAttachment/premarketreports/Building_Materials_Thematic_150326.pdf'],
+ ['src','Bathware market','Faucetware ₹201.9 bn, 60% organised; Jaquar 15–20% share, Hindware 4–5%, Cera 4–5%; project demand outperforming retail; dealer checks by region','PL Capital, Jun 2026','https://plindia.com/ResReport/BuildingMaterial-9-6-26-PL.pdf'],
+ ['src','Bathware market','India faucet market USD 1.76 bn (2025) to USD 2.66 bn (2031); residential 67.7%; brass 48.7%; PTMT strong in semi-urban self-build; South 34% of revenue; B2B/project 70% (scope differs from the bath-fittings report)','Mordor Intelligence, India faucet market','https://www.mordorintelligence.com/industry-reports/india-faucet-market'],
+ ['src','Bathware market','India bath fittings USD 11.49 bn (2025); faucets 36.45%; B2C 74.23%; B2B and project 25.77%, CAGR 8.72%; West 30.2%; South fastest','Mordor Intelligence, India bath fittings','https://www.mordorintelligence.com/industry-reports/india-bath-fittings-market'],
+ ['src','Bathware market','Sanitaryware regions: West 32.5%, North 28.7%, South 23.6%, East 15.2%; unorganised 35–45%','IMARC','https://www.imarcgroup.com/india-sanitary-ware-market'],
+ ['src','Bathware market','Home improvement ₹3 lakh Cr (2025) to ₹4 lakh Cr by 2030; renovation cycle 10–12 years','Alvarez & Marsal','https://www.alvarezandmarsal.com/press-release/india-s-home-improvement-boom-from-repair-to-reimagination'],
+ ['der','Bathware market','Organised faucets ₹12,114 Cr = ₹20,190 Cr × 60%; organised project faucets ≈ ₹4,846 Cr at a 40% project share; new-build ≈ ₹3,634 Cr at 75%','Calculated','#'],
+ ['unv','Bathware market','Mordor bath-fittings report puts B2B at 26%; Mordor faucet report puts B2B/project at 70%; Cera and Jaquar report ≈40%. The model uses 40%','Scope conflict between reports','#'],
+ /* incumbents and channels */
+ ['src','Incumbents','Jaquar FY25 turnover ₹7,548 Cr, FY26 ₹8,703 Cr, target ₹12,000 Cr; ~60% share of bath fittings; 52.9 mn fittings a year; Artize, Jaquar, Essco tiers','Business Today, Sep 2026','https://www.businesstoday.in/magazine/deep-dive/story/jaquar-group-the-unlisted-manufacturing-giant-552780-2026-09-02'],
+ ['src','Incumbents','Jaquar ~4,000 dealers and 21 Orientation Centres (2020); 2,500+ points of sale, 800 showrooms, retail 60% / projects 40% (2018)','YourStory; Retail4Growth','https://yourstory.com/smbstory/jaquar-bath-fittings-taps-faucets-business-delhi'],
+ ['src','Incumbents','Cera FY26 revenue ₹2,053 Cr, EBITDA margin 13.2%; faucetware 40.5% of mix; retail:project ~60:40; Senator + Polipluz ₹19 Cr, target ₹70–80 Cr FY27','BOBCAPS, May 2026','https://www.barodaetrade.com/Reports/CeraSanitaryware-Q4FY26ResultReview11May26-Research.pdf'],
+ ['src','Incumbents','Cera Q2 FY27: revenue ₹603 Cr (+27%); faucetware +38%; 61% retail / 39% project; premium 43% / mid 37% / entry 20%; 32,000 dealers and distributors; 13 studios, 318 hubs, 285 galleries','Cera release, 4 Nov 2026','https://nsearchives.nseindia.com/corporate/CERA_04112026163543_CERAQ2H1PRE04112026s.pdf'],
+ ['src','Incumbents','Cera Polipluz launched Jul 2025 as affordable bath solutions; PTMT and brass variants; ₹9,000 Cr tier-4 market target; 24–25% EBITDA; hardware-store channel; project margins 6–7 pts below retail','Cera press release and earnings calls','https://www.cera-india.com/sites/default/files/2025-08/Q1%20FY%202025-26%20Earnings%20Call%20Transcript_1.pdf'],
+ ['src','Incumbents','Hindware FY26: revenue ₹2,510 Cr; bathware ₹1,521 Cr (+9.9%); bathware EBITDA 10.3–10.7%; 100,000+ plumbers registered','BOBCAPS, May 2026','https://www.barodaetrade.com/Reports/HindwareHomeInnovation-Q4FY26ResultReview21May26-Research.pdf'],
+ ['src','Incumbents','Hindware ~25,000 dealers, ~540 exclusive stores; Lacasa rebranded as Experience Centres, 10–12 targeted (Delhi open; Hyderabad, Bengaluru next)','Indian Retailer, Dec 2025','https://indianretailer.com/interview/retail-people/profiles/hindware-bets-big-experience-centres-eyes-10-12-locations-over-5'],
+ ['src','Incumbents','Hindware institutional business and Architect Connect programme','Hindware','https://hindware.com/institutional-business'],
+ ['src','Incumbents','Truflo by Hindware PTMT faucets: Isnapur (Hyderabad) plant, 270+ distributors, 20,000+ retail outlets, Tier 2 and 3 framing','ThePrint / ANI','https://theprint.in/ani-press-releases/truflo-by-hindware-forays-into-ptmt-faucets-and-accessories-commences-commercial-production-from-its-second-state-of-the-art-plant/1326050'],
+ ['src','Incumbents','Parryware: 22,000+ dealers and retailers; Bandhan loyalty ~1,00,000 plumbers (~80,000 active)','Parryware','https://www.parryware.in/loyalty-program'],
+ ['src','Incumbents','Astral: 3,990+ distributors, 2,70,000+ dealers (all categories); bathware +27% FY26; 34 bath showrooms opened','Astral investor presentation, May 2026','https://www.astralltd.com/wp-content/uploads/2026/05/Investor-Presentation-May-2026.pdf'],
+ ['src','Incumbents','Prince Pipes: 1,500+ distributors; Udaan loyalty 1,50,000+ plumbers, retailers, wholesalers; Duratap PTMT with 36-month warranty','Prince Pipes','https://princepipes.com/prince-udaan-loyalty-program'],
+ ['src','Incumbents','Kohler Experience Centres Delhi, Mumbai, Bengaluru; Studio Kohler Hyderabad (2024)','PRNewswire; Surfaces Reporter','https://surfacesreporter.com/articles/186145/kohler-opens-its-first-studio-kohler-in-india-at-hyderabad-sr-news-update'],
+ ['src','Incumbents','GROHE ~400 stores and centres in 80–90 cities; 14,000 sq ft Bengaluru centre','Indian Retailer, Oct 2026','https://indianretailer.com/interview/retail-people/luxury/lixils-grohe-bets-premiumisation-experiential-retail-expand-india'],
+ ['src','Incumbents','Roca display studios: Lucknow, Kolkata, Bengaluru, Hyderabad; Delhi gallery','Roca','https://www.roca.in/display-studios'],
+ ['src','Channels','Regional dealer checks: Cera strong North/West/Kerala, weak East/AP/Telangana; Hindware East/South/West; Parryware TN and East, losing share in South ex-TN','BOBCAPS sector update, Oct 2024','https://www.barodaetrade.com/Reports/BuildingMaterial-SectorUpdate3Oct24-Research.pdf'],
+ ['src','Channels','Retail discount 25–40% off MRP; distributor → dealer → retailer structure','InteriorDecorDesigns guide 2026','https://interiordecordesigns.in/articles/bathroom-fittings-sanitaryware-guide-india-2026'],
+ ['unv','Channels','Project discount depth of 40–60% off MRP is trade lore; no broker publishes it','Not published','#'],
+ ['src','Channels','Infra.Market IVAS: 10,000+ touchpoints, 30+ flagships for tiles and bath','PRNewswire','https://prnewswire.com/in/news-releases/inframarket-appoints-atul-sanghvi-as-chief-operating-officer-for-tiles-bath-fittings--sanitaryware-302005846.html'],
+ ['src','Channels','Brick&Bolt supplies Parryware, Jaquar, Hindware, Kohler, GROHE to its projects','Brick&Bolt','https://www.bricknbolt.com/building-materials-supply/sanitary-ware'],
+ ['src','Channels','Arisinfra + House of W: ₹300 Cr a year sanitaryware fulfilment for Transcon and Wadhwa','NBM&CW','https://www.nbmcw.com/news/arisinfra-partners-with-the-house-of-w-to-boost-rs300-cr-sanitaryware-supply.html'],
+ ['src','Channels','India had ~3.52 lakh skilled but uncertified plumbers; ~90% untrained (2018)','Sourcing Hardware / IPSC','https://sourcinghardware.net/plumbing-skills-council-aims-deliver-plumber-every-1500-persons/'],
+ ['src','Channels','GST 18% on HSN 8481 taps and cocks; IS 9763:2000 for plastic bib and pillar taps; brass IS 781, 1795, 8931, 1701','Tally; EVTL; EngineeringCivil','https://tallysolutions.com/gst/hsn-code-8481-gst-rate-product-details/'],
+ /* specs and hotel references */
+ ['src','Specs','Brigade unit-plan spec: CP "Jaquar/Ess Ess/Essco or equivalent"; EWC "Hindware/Parryware/Cera or equivalent"','Brigade Group PDF','https://cdn.brigadegroup.com/properties/plans/15651750455d4aad0582bbb.pdf'],
+ ['src','Specs','Prestige Golden Grove, Hyderabad: CP "Kohler, Grohe, or equivalent"; Southern Star, Bengaluru: six brands "or equivalent"','Homznspace listings','https://www.homznspace.com/prestige-golden-grove-tellapur-hyderabad/'],
+ ['src','Specs','Rajapushpa The Retreat: "Jaquar or equivalent make"; Vasavi Lake City: CP "chrome plated", no brand; Aparna Sarovar Zicon: "Kohler or equivalent"; My Home Apas: "reputed brands"','Developer brochures','https://images.jdmagicbox.com/standard/brouchers/040pxx40.xx40.200923194208.n7g9/rajapushpa-the-retreat_ioctvfwrsk.pdf'],
+ ['src','Specs','Signature Global HRERA specs: sanitaryware and CP "ISI MARKED"; De-Luxe DXP: "GROHE/KOHLER/JAQUAR/TOTO or equivalent"','Haryana RERA','https://haryanarera.gov.in/view_project/project_preview_open/1472'],
+ ['src','Specs','Godrej 24 Pune: "Jaquar or equivalent"; Lodha Golden Ticket: "Jaquar/Kohler/Roca" or equivalent; Casagrand Aristo: "Kohler/Roca or equivalent"; Mahindra Luminare: "Toto, Grohe or equivalent", servant "Jaquar, Hindware or equivalent"','Developer brochures','https://www.godrejproperties.com/backoffice/data_content/projects/godrej_24_pune/landing_page/pdf/godrej-24-e-catalogue.pdf'],
+ ['src','Specs','Fixed specs: Puravankara Atmosphere (Artize/Kohler/Grohe/Kludi shortlist); Shriram Chirping Woods (Jaquar Florentine and Lyric)','RERA spec; brochure','https://img.staticmb.com/mbimages/reradoc/2024/06/21/5128889ProjectSpecification_2_4.pdf'],
+ ['src','Specs','Unbranded specs: DLF Garden City Enclave ("conventional CP fittings"); Sobha Insignia ("reputed make"); Birla Trimaya; Kalpataru Paramount','Developer PDFs','https://dlf.in/homes/premium/gardencityenclave/independent-floors-phase-2/pdf/Specifications.pdf'],
+ ['der','Specs','Open-spec share 74% = 20 open or unbranded of 27 specs read (19 "or equivalent", 6 unbranded, 2 fixed); 25 of 27 are not fixed','Calculated from the spec sample','#'],
+ ['src','Specs','GROHE–Gaurs MoU (Jul 2026): GROHE across about 40,000 NCR homes over four years','Realty Today','https://therealtytoday.com/news/interiors/grohe-and-gaurs-group-signs-mou-to-integrate-bathroom-solutions-across-40000-homes'],
+ ['src','Specs','Asian Paints Bathsense: 11 Mumbai builders switched from Jaquar and Ess Ess on price and service','Asian Paints Bathsense testimonial book','https://bathsense.asianpaints.com/content/dam/ap-bathsense-revamp/catalogue-assets/pdf/Mumbai%20Builder%20Testimonials.pdf'],
+ ['src','Hotel references','Artize/Jaquar projects: Rambagh Palace, Taj West End, Oberoi Rajvilas, Marriott Coorg, Ritz-Carlton Udaipur, Westin Nashik, Radisson Blu New Delhi, The Lodhi','Artize projects page; Jaquar testimonials','https://artize.com/in/projects'],
+ ['src','Hotel references','Grand Hyatt Gurgaon (442 keys): TOTO project','TOTO project sheet','https://www.toto.com/project/pdf/GRAND-HYATT-GURGAON.pdf'],
+ ['src','Hotel references','Leela Kovalam: GROHE Sinfonia and Rainshower','Archello','https://archello.com/project/the-leela'],
+ ['src','Hotel references','Duravit lists Hyatt, IHCL, Novotel, ITC, Oberoi, Holiday Inn, Marriott, Hilton, Westin at chain level (ceramics)','BW Hotelier','https://bwhotelier.com/article/duravit-perfect-bathroom-solutions-421558'],
+ ['src','Hotel references','Prayag (PTMT pioneer) launched brass faucets in Feb 2025 pitched at hotels and luxury homes','RealtyNMore','https://realtynmore.com/prayag-polymers-unveils-premium-brass-faucets-for-homes-and-businesses'],
+ ['unv','Hotel references','No published bathware supplier for Lemon Tree, Ginger, OYO, Treebo, FabHotels, Sarovar, Royal Orchid, Pride or Bloom; no brand-standard document on polymer found either way','Not published','#'],
+ /* hotels */
+ ['src','Hotels','Branded room pipeline 161,074 proposed, 116,645 active; surveyed stock 209,180 rooms; net additions 11,424 in 2025-26; over 70% of new rooms budget to upper-midmarket','Hotelivate-Savills, Oct 2026','https://www.asianhospitality.com/india-hotel-pipeline-161k-rooms-supply/'],
+ ['src','Hotels','2025 signings 51,647 rooms, 424 properties; 71% Tier 2 and 3; 81% management contracts','JLL via Hotel Online','https://www.hotel-online.com/news/indias-hotel-boom-moves-beyond-the-megacities'],
+ ['src','Hotels','Domestic brands: 70% of 2025 openings at an average of 65 keys; global chains 117 keys','Hindu BusinessLine via Pulse','https://www.pulse.bot/hotels/news/ihcl-lemon-tree-hotels-topped-room-additions-in-2025-3aea4097-374f-409d-b65b-c473282352f5/'],
+ ['src','Hotels','Hotel development cost ex-land: average ~USD 146k per key, median ~USD 112k; budget-to-luxury ratio 6.2×; MEP and FF&E from ~USD 32 per sq ft','Hotelivate-Savills Construction Cost Insights 2025','https://www.asianhospitality.com/india-hotel-growth-costs-returns-report/'],
+ ['src','Hotels','Mid-scale 80-key Tier 2 hotel: ₹34–49 lakh per key; FF&E and OS&E ₹5.6–7.5 lakh per key','India Gully, Sep 2025','https://indiagully-git-hub2.pages.dev/insights/greenfield-midscale-hotels'],
+ ['src','Hotels','Hyderabad: 7,785 branded rooms, 2,692 proposed; occupancy 75.9%, ADR ₹9,306','Hotelivate Trends & Opportunities, Oct 2025','https://www.hotelivate.com/wp-content/uploads/2025/10/TO-Oct2025.pdf'],
+ ['src','Hotels','Lemon Tree: 269 hotels, 131 operating, 138 pipeline, 56 FY26 signings','Lemon Tree, Apr 2026','https://nsearchives.nseindia.com/corporate/LEMONTREE_13042026205720_LTHL_Press_Release_Signed.pdf'],
+ ['src','Hotels','Radisson: 157–160 hotels, 19,000–19,500 keys by Dec 2026; 500 hotels by 2030','Outlook Business','https://www.outlookbusiness.com/corporate/radisson-aims-160-hotels-19500-keys-in-india-by-end-2026-co-executive'],
+ ['src','Hotels','PRISM (OYO): 300 company-serviced hotels in Telangana and Andhra Pradesh','Bizz Buzz, Feb 2026','https://www.bizzbuzz.news/industry/hospitality/prism-plans-to-add-300-hotels-1386189'],
+ ['src','Hotels','ITC Hotels: 33 hotels and 3,300+ keys signed FY26; 67 managed hotels and ~6,700 keys in pipeline; named owner-partners Sandy Resort and Bhauram Jodhraj','ITC Hotels releases','https://www.itchotels.com/'],
+ ['unv','Hotels','Radisson Collection Hyderabad (300 keys) and Radisson Blu Resort Chevella (160 keys) were listed for Q2 2026; no opening announcement found by 7 Nov 2026','Hospitality Net signings (2023)','https://www.hospitalitynet.org/announcement/41009410.html'],
+ ['src','Hotels','Telangana Tourism Policy 2025–30: ₹15,000 Cr investment target; 50% SGST reimbursement for five years (hotels reportedly excluded)','TravTalk India','https://travtalkindia.com/telangana-unveils-tourism-policy-2025-2030-proposes-50-sgst-reimbursement-for-investors/'],
+ /* BirlaNu */
+ ['src','BirlaNu','FY26: consolidated revenue ₹3,730 Cr; standalone ₹2,427 Cr, EBITDA ₹146 Cr; Roofs ₹1,139 Cr; portfolio pipes, construction chemicals, putty, roofs, walls, floors','BirlaNu Annual Report FY26','https://birlanu.com/annual-report-25-26/corporate-overview/md-ceo-message/'],
+ ['src','BirlaNu','FY26 BRSR: 5,937 dealers and distributors (4,092 in FY25); 90.66% of sales via dealers; top 10 dealers 8.68%; 30 plants at 19 locations; 53 depots; 27 states and Nepal; 64,921 plumber and contractor meets; 418 architects','BirlaNu BRSR, Jul 2026','https://nsearchives.nseindia.com/corporate/HIL_10072026125427_SE_intimation-BRSR_Signed.pdf'],
+ ['src','BirlaNu','Q1 FY27 revenue ₹1,174 Cr, EBITDA ₹80 Cr; India revenue ₹833 Cr; new boards plant near Hyderabad and Nellore greenfield approved','RealtyNMore','https://realtynmore.com/birlanu-delivers-strong-q1-fy27-performance/'],
+ ['src','BirlaNu','Q2 FY27 revenue ₹884.5 Cr; H1 FY27 ₹2,059 Cr; Clean Coats merger approved Oct 2026; ₹500 Cr capex for construction chemicals and piping','Multibagg; Sahi','https://www.sahi.com/news/birlanu-reports-q2-revenue-of-885-crore-versus-800-crore-yoy'],
+ ['src','BirlaNu','Aerocon Walls clients (16 names), project references (Symbiosis, Pune Metro, Bharat Mandapam, Telangana Secretariat) and four architect testimonials','birlanu.com/walls','https://birlanu.com/walls'],
+ ['unv','BirlaNu','AIIMS, Parliament, Coimbatore Airport and IIT Hyderabad are not on the verified birlanu.com walls page','Not verified','#'],
+ ['src','BirlaNu','Topline/Crestia acquisition ₹265 Cr: Topline, Rockwell, Soniplast brands; FY24 turnover ~₹330 Cr; East India; channel in 15 states; JJM approval in 12','Realty Plus','https://www.rprealtyplus.com/realty-spotlight/hil-ltdacquires-eastern-indias-popular-pipes-fittings-brand-topline-114360.html'],
+ ['src','BirlaNu','Clean Coats acquired for ₹120 Cr (Nov 2025)','Business Standard','https://www.business-standard.com/companies/start-ups/birlanu-acquires-clean-coats-for-rs-120-crore-125110701553_1.html'],
+ /* cost benchmarks */
+ ['src','Cost per bathroom','CP fittings per bathroom at retail: economy ₹9,000–15,000; standard (Jaquar, Cera, Hindware) ₹22,000–35,000, worked example ₹26,200; luxury ₹55,000–1.2 lakh+; 10–11 CP points per bathroom','Studio Matrx, Jul 2026','https://www.studiomatrx.org/guides/bathroom-faucet-cost-india'],
+ ['src','Cost per bathroom','Plumbing per bathroom ₹22,000–38,000 excluding sanitaryware; 6–10 points per bathroom; mid-range example ≈₹35,500 with WC and labour','Houseyog, 2026','https://www.houseyog.com/blog/?p=1708'],
+ ['src','Cost per bathroom','Jaquar indicative prices: basin mixer ₹2,500–12,000; pillar cock ₹350–1,800; health faucet ₹1,400–2,500; angle valve ₹250–600; overhead shower ₹1,200–8,000+','Home-Run Bangalore price list','https://home-run.co/blogs/homerun-knowledge-base/jaquar-bangalore-price-list'],
+ ['src','Cost per bathroom','GTM plan kits: Premier ₹19,293 MRP / ₹11,445 realised; Essential ₹7,195 / ₹4,268; Hotel ₹20,293 / ₹11,178; Atelier ₹49,293 / ₹31,330','NuFlow GTM plan (team document, Nov 2026)','#'],
+ /* derived and assumed model inputs */
+ ['der','Model','Bathrooms per home 2.4 = 14% × 1.5 + 17% × 2 + 34% × 2.5 + 35% × 3 (Q3 2026 launch mix)','Calculated','#'],
+ ['der','Model','Blended CP set per bathroom ₹14,620 = 14% × ₹6,000 + 51% × ₹11,000 + 24% × ₹18,000 + 11% × ₹35,000','Calculated from assumed band prices','#'],
+ ['der','Model','Home TAM top 7 ≈ ₹1,250 Cr = 4,19,170 × 85% × 2.4 × ₹14,620; Tier 2 ≈ ₹229 Cr; hotels ≈ ₹70 Cr; PMAY ≈ ₹63 Cr','Calculated','#'],
+ ['der','Model','Blended CP set per hotel room ₹18,900 = 70% × ₹12,000 + 30% × ₹35,000; +15% for public areas','Calculated','#'],
+ ['der','Model','South cluster (Hyderabad, Bengaluru, Chennai) = 34.5% of top-7 launches; Hyderabad = 10.3%','Calculated from Anarock','#'],
+ ['ass','Model','85% of top-7 launches are apartments where the developer fits CP fittings (standard practice; villas and plots excluded). Earlier explorer used 60%','Analyst assumption','#'],
+ ['ass','Model','Project prices per CP set by band: ₹6,000 / ₹11,000 / ₹18,000 / ₹35,000, i.e. retail tiers less roughly 40–50%','Analyst assumption anchored to Studio Matrx tiers','#'],
+ ['ass','Model','Hotel CP set: ₹12,000 economy to mid, ₹35,000 upscale and luxury; replacement every 10 years; +15% public, staff and kitchen areas','Analyst assumption','#'],
+ ['ass','Model','Tier 2: 2.2 bathrooms, ₹9,000 per set; PMAY partnership: one bathroom at ₹3,500','Analyst assumption','#'],
+ ['ass','Model','Hotels apportioned by city using home launch share when a geography is selected','Analyst assumption','#'],
+ ['ass','Model','SOM phases, hotels and Atelier counts follow the GTM plan; 200 homes per phase; 60% Premier kit; 75 keys per hotel; ₹14 lakh per Atelier project','GTM plan assumptions','#'],
+ ['ass','Model','₹88 per USD for cross-checks','Assumed rate','#'],
+ ['unv','Model','Whether luxury or global hotel brand standards allow polymer-hybrid fittings','No standard found either way','#'],
+ ['unv','Model','BHK mix and bathrooms per home have no published dataset; the band-based derivation is a convention','Not published','#']
+];
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const fmt=(n,d=0)=>Number(n).toLocaleString('en-IN',{maximumFractionDigits:d,minimumFractionDigits:d});
+const cr=(n)=>'₹'+(n>=100?fmt(n,0):n>=10?fmt(n,1):fmt(n,2))+' Cr';
+const TAGN={src:'sourced',der:'derived',ass:'assumed',unv:'unverified'};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const nice=(max)=>{const step=max/4,p=Math.pow(10,Math.floor(Math.log10(step))),n=step/p;const pick=[1,1.5,2,2.5,3,4,5,6,8,10].find(v=>v>=n-1e-9);return pick*p*4};
+
+/* ---------- model ---------- */
+const NAT_LAUNCH=419170;
+const BAND={aff:14,mid:51,prem:24,lux:11}; /* Q3 2026 launch mix, Anarock */
+const BASE={
+  launch:419170,fitted:85,baths:2.4,pAff:6000,pMid:11000,pPrem:18000,pLux:35000,
+  t2launch:136243,t2baths:2.2,t2price:9000,
+  rooms:11424,stock:209180,years:10,mixEM:70,pEM:12000,pUP:35000,pub:15,
+  pmay:180000,pmayPrice:3500,
+  bandElig:75,openSpec:74,eligH:70,
+  phases:[7,12,18,25,32],homesPer:200,kbaths:2.2,premShare:60,kPrem:11445,kEss:4268,
+  hotels:[6,10,16,22,28],keys:75,kHotel:11178,
+  atelier:[0,0,3,6,9],kAtelier:14
+};
+let S=JSON.parse(JSON.stringify(BASE));
+const PRESETS={
+ low:{fitted:75,baths:2.2,pAff:5000,pMid:9000,pPrem:15000,pLux:28000,t2price:7500,pEM:9000,pUP:28000,years:12,openSpec:60,eligH:60,pmayPrice:3000},
+ base:{fitted:85,baths:2.4,pAff:6000,pMid:11000,pPrem:18000,pLux:35000,t2price:9000,pEM:12000,pUP:35000,years:10,openSpec:74,eligH:70,pmayPrice:3500},
+ high:{fitted:90,baths:2.6,pAff:7000,pMid:13000,pPrem:22000,pLux:45000,t2price:11000,pEM:15000,pUP:45000,years:8,openSpec:85,eligH:75,pmayPrice:4000}};
+const PLAN={dev:[2.64,null,null,null,14.39],hot:[0.58,null,null,null,2.97],atl:[0,null,null,null,1.24]};
+const cityOn={};CITIES.forEach(c=>cityOn[c.id]=true);
+
+function calc(s,on){
+  const sel=CITIES.filter(c=>on[c.id]).reduce((a,c)=>a+c.launch,0);
+  const g=sel/NAT_LAUNCH;
+  const blendR=(BAND.aff*s.pAff+BAND.mid*s.pMid+BAND.prem*s.pPrem+BAND.lux*s.pLux)/100;
+  const resi=s.launch*(s.fitted/100)*s.baths*blendR/1e7;
+  const t2=s.t2launch*(s.fitted/100)*s.t2baths*s.t2price/1e7;
+  const blendH=(s.mixEM/100)*s.pEM+(1-s.mixEM/100)*s.pUP;
+  const up=1+s.pub/100;
+  const hNew=s.rooms*blendH*up/1e7;
+  const hRep=(s.stock/s.years)*blendH*up/1e7;
+  const pmay=s.pmay*s.pmayPrice/1e7;
+  const tam={resi:resi*g,t2,hNew:hNew*g,hRep:hRep*g,pmay};
+  tam.total=tam.resi+tam.t2+tam.hNew+tam.hRep+tam.pmay;
+  const eR=(s.bandElig/100)*(s.openSpec/100);
+  const sam=tam.resi*eR+tam.t2*eR+(tam.hNew+tam.hRep)*(s.eligH/100)+tam.pmay;
+  const kit=(s.premShare/100)*s.kPrem+(1-s.premShare/100)*s.kEss;
+  const som=[0,1,2,3,4].map(i=>{
+    const d=s.phases[i]*s.homesPer*s.kbaths*kit/1e7;
+    const h=s.hotels[i]*s.keys*up*s.kHotel/1e7;
+    const a=s.atelier[i]*s.kAtelier/100;
+    return {d,h,a,t:d+h+a};
+  });
+  return {g,blendR,blendH,kit,eR,tam,sam,som};
+}
+
+/* ---------- tooltip ---------- */
+const tip=$('#tip');
+document.addEventListener('mousemove',e=>{
+  const t=e.target.closest&&e.target.closest('[data-tip]');
+  if(!t){tip.style.opacity=0;return}
+  tip.textContent=t.getAttribute('data-tip');tip.style.opacity=1;
+  const x=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8),y=e.clientY+16;
+  tip.style.left=x+'px';tip.style.top=y+'px';
+});
+document.addEventListener('focusin',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(t){const r=t.getBoundingClientRect();tip.textContent=t.getAttribute('data-tip');tip.style.opacity=1;tip.style.left=r.left+'px';tip.style.top=(r.bottom+6)+'px'}});
+document.addEventListener('focusout',()=>{tip.style.opacity=0});
+
+/* ---------- routing ---------- */
+const VIEWS=['answer','market','channels','birlanu','partners','geography','numbers','playbook','evidence'];
+function route(){
+  let h=location.hash.slice(1);if(!VIEWS.includes(h))h='answer';
+  VIEWS.forEach(v=>{$('#v-'+v).hidden=v!==h;const a=$('#t-'+v);if(v===h)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  window.scrollTo(0,0);
+  try{const a=$('#t-'+h);a&&a.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}
+}
+addEventListener('hashchange',route);
+
+/* ---------- slide bars ---------- */
+function slideText(k){
+  const b=calc(BASE,Object.fromEntries(CITIES.map(c=>[c.id,true])));
+  const sub=s=>s.replace('{TAM}',cr(b.tam.total)).replace('{SAM}',cr(b.sam)).replace('{SOM}',cr(b.som[2].t));
+  const s=SLIDES[k];
+  return {h:sub(s.h),b:s.b.map(sub)};
+}
+function mountSlides(){
+  document.querySelectorAll('.slide').forEach(el=>{
+    const k=el.dataset.slide,s=slideText(k);
+    el.innerHTML=`<div><span class="eyebrow">Slide headline</span><b>${esc(s.h)}</b></div><button class="btn" type="button">Copy slide notes</button>`;
+    const btn=$('button',el);
+    btn.addEventListener('click',async()=>{
+      const txt=s.h+'\n\n'+s.b.map(x=>'• '+x).join('\n')+'\n\nSource: NuFlow B2B GTM Explorer, Nov 2026 (see Evidence tab)';
+      let ok=false;
+      try{await navigator.clipboard.writeText(txt);ok=true}catch(e){ok=false}
+      if(ok){btn.textContent='Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy slide notes';btn.classList.remove('ok')},1800)}
+      else{
+        let box=$('.copybox',el);
+        if(!box){box=document.createElement('div');box.className='copybox';box.innerHTML=`<p class="note" style="margin-bottom:6px">Clipboard is blocked here. Select and copy the text below.</p><textarea readonly></textarea>`;el.appendChild(box)}
+        const ta=$('textarea',box);ta.value=txt;ta.focus();ta.select();
+      }
+    });
+  });
+}
+
+/* ---------- sliders ---------- */
+function sliderRow(c){
+  const id=c.k+(c.i!==undefined?'_'+c.i:'');
+  return `<label class="sl" for="${id}"><span>${c.l}<i class="tag ${c.t}">${TAGN[c.t]}</i></span><input type="range" id="${id}" data-k="${c.k}" ${c.i!==undefined?`data-i="${c.i}"`:''} min="${c.min}" max="${c.max}" step="${c.step}" value="${c.i!==undefined?S[c.k][c.i]:S[c.k]}"><output id="o_${id}"></output></label>`;
+}
+const RS=[
+ {k:'launch',l:'Home launches per year, top 7 cities (2025)',t:'src',min:250000,max:550000,step:5000,f:v=>fmt(v)},
+ {k:'fitted',l:'Launches where the developer fits CP fittings (apartments yes, plots and villas no)',t:'ass',min:40,max:100,step:1,f:v=>v+'%'},
+ {k:'baths',l:'Bathrooms per home, from the price-band mix',t:'der',min:1.5,max:3.2,step:0.1,f:v=>v.toFixed(1)},
+ {k:'pAff',l:'CP set per bathroom, below ₹40 L (14% of launches), project price',t:'ass',min:3000,max:12000,step:250,f:v=>'₹'+fmt(v)},
+ {k:'pMid',l:'CP set, ₹40 L to 1.5 Cr (51%)',t:'ass',min:5000,max:20000,step:250,f:v=>'₹'+fmt(v)},
+ {k:'pPrem',l:'CP set, ₹1.5 to 2.5 Cr (24%)',t:'ass',min:8000,max:35000,step:500,f:v=>'₹'+fmt(v)},
+ {k:'pLux',l:'CP set, above ₹2.5 Cr (11%)',t:'ass',min:15000,max:80000,step:1000,f:v=>'₹'+fmt(v)}];
+const TS=[
+ {k:'t2launch',l:'Launches per year, 15 Tier 2 cities (2025)',t:'src',min:60000,max:250000,step:2500,f:v=>fmt(v)},
+ {k:'t2baths',l:'Bathrooms per home',t:'ass',min:1.5,max:3,step:0.1,f:v=>v.toFixed(1)},
+ {k:'t2price',l:'CP set per bathroom, project price',t:'ass',min:4000,max:16000,step:250,f:v=>'₹'+fmt(v)}];
+const HS=[
+ {k:'rooms',l:'New branded rooms opened per year',t:'src',min:5000,max:30000,step:100,f:v=>fmt(v)},
+ {k:'stock',l:'Existing branded rooms',t:'src',min:100000,max:300000,step:1000,f:v=>fmt(v)},
+ {k:'years',l:'Years between fittings replacement',t:'ass',min:6,max:15,step:1,f:v=>v+' yr'},
+ {k:'mixEM',l:'Rooms in economy to upper-midscale',t:'src',min:40,max:90,step:1,f:v=>v+'%'},
+ {k:'pEM',l:'CP set per room, economy to mid, project price',t:'ass',min:5000,max:25000,step:250,f:v=>'₹'+fmt(v)},
+ {k:'pUP',l:'CP set per room, upscale and luxury',t:'ass',min:15000,max:80000,step:1000,f:v=>'₹'+fmt(v)},
+ {k:'pub',l:'Extra for public, staff and kitchen areas',t:'ass',min:0,max:40,step:1,f:v=>'+'+v+'%'}];
+const PS=[
+ {k:'pmay',l:'Partnership units per year (AHP and ISSR, 18 lakh over 10 years)',t:'der',min:50000,max:400000,step:5000,f:v=>fmt(v)},
+ {k:'pmayPrice',l:'CP set per unit (one bathroom), tender price',t:'ass',min:1500,max:8000,step:100,f:v=>'₹'+fmt(v)}];
+const ES=[
+ {k:'bandElig',l:'Homes in the ₹40 L to 2.5 Cr bands',t:'src',min:40,max:100,step:1,f:v=>v+'%'},
+ {k:'openSpec',l:'Specs that are open or unbranded (20 of 27 in sample)',t:'der',min:30,max:100,step:1,f:v=>v+'%'},
+ {k:'eligH',l:'Hotel rooms a polymer-hybrid line can serve',t:'der',min:30,max:95,step:1,f:v=>v+'%'}];
+const OS=[
+ {k:'phases',i:0,l:'Developer phases won, FY28',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'phases',i:1,l:'Phases, FY29',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'phases',i:2,l:'Phases, FY30',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'phases',i:3,l:'Phases, FY31',t:'ass',min:0,max:50,step:1,f:v=>v},
+ {k:'phases',i:4,l:'Phases, FY32',t:'ass',min:0,max:60,step:1,f:v=>v},
+ {k:'homesPer',l:'Homes per phase',t:'ass',min:50,max:600,step:10,f:v=>v},
+ {k:'kbaths',l:'Bathrooms per home in won phases',t:'ass',min:1.5,max:3,step:0.1,f:v=>v.toFixed(1)},
+ {k:'premShare',l:'Bathrooms on the Premier kit (rest Essential)',t:'ass',min:0,max:100,step:5,f:v=>v+'%'},
+ {k:'kPrem',l:'Premier kit realised price',t:'src',min:6000,max:18000,step:100,f:v=>'₹'+fmt(v)},
+ {k:'kEss',l:'Essential kit realised price',t:'src',min:2500,max:8000,step:100,f:v=>'₹'+fmt(v)},
+ {k:'hotels',i:0,l:'Hotels won, FY28',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'hotels',i:1,l:'Hotels, FY29',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'hotels',i:2,l:'Hotels, FY30',t:'ass',min:0,max:40,step:1,f:v=>v},
+ {k:'hotels',i:3,l:'Hotels, FY31',t:'ass',min:0,max:50,step:1,f:v=>v},
+ {k:'hotels',i:4,l:'Hotels, FY32',t:'ass',min:0,max:60,step:1,f:v=>v},
+ {k:'keys',l:'Rooms per hotel',t:'src',min:30,max:150,step:5,f:v=>v},
+ {k:'kHotel',l:'Hotel room kit realised price',t:'src',min:6000,max:18000,step:100,f:v=>'₹'+fmt(v)},
+ {k:'atelier',i:2,l:'Atelier projects, FY30',t:'ass',min:0,max:20,step:1,f:v=>v},
+ {k:'atelier',i:3,l:'Atelier projects, FY31',t:'ass',min:0,max:20,step:1,f:v=>v},
+ {k:'atelier',i:4,l:'Atelier projects, FY32',t:'ass',min:0,max:20,step:1,f:v=>v},
+ {k:'kAtelier',l:'Revenue per Atelier project (₹ lakh)',t:'der',min:5,max:40,step:1,f:v=>'₹'+v+' L'}];
+const ALLS=[...RS,...TS,...HS,...PS,...ES,...OS];
+function mountSliders(){
+  $('#s-r').innerHTML=RS.map(sliderRow).join('');
+  $('#s-t').innerHTML=TS.map(sliderRow).join('');
+  $('#s-h').innerHTML=HS.map(sliderRow).join('');
+  $('#s-p').innerHTML=PS.map(sliderRow).join('');
+  $('#s-e').innerHTML=ES.map(sliderRow).join('');
+  $('#s-o').innerHTML=OS.map(sliderRow).join('');
+  document.querySelectorAll('input[data-k]').forEach(el=>el.addEventListener('input',()=>{
+    const k=el.dataset.k,v=parseFloat(el.value);
+    if(el.dataset.i!==undefined)S[k][+el.dataset.i]=v;else S[k]=v;
+    document.querySelectorAll('#presets .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+    renderNumbers();
+  }));
+}
+function syncSliders(){
+  ALLS.forEach(c=>{
+    const id=c.k+(c.i!==undefined?'_'+c.i:'');
+    const el=document.getElementById(id);if(!el)return;
+    const v=c.i!==undefined?S[c.k][c.i]:S[c.k];
+    el.value=v;document.getElementById('o_'+id).textContent=c.f(v);
+  });
+}
+
+/* ---------- number charts ---------- */
+function renderFunnel(r){
+  const rows=[['TAM',r.tam.total,'var(--f1)','Institutional spend in scope'],['SAM',r.sam,'var(--f2)','Kit can be specified'],['SOM FY30',r.som[2].t,'var(--f3)','Projects won, plan kits']];
+  const max=Math.max(...rows.map(x=>x[1]),1),W=270,x0=160;
+  $('#funnel').innerHTML=rows.map((x,i)=>{
+    const y=12+i*58,w=Math.max(3,x[1]/max*W);
+    return `<text x="0" y="${y+16}" font-size="13" font-weight="600" style="fill:var(--ink)">${x[0]}</text>
+    <text x="0" y="${y+32}" font-size="10.5">${x[3]}</text>
+    <rect x="${x0}" y="${y}" width="${w}" height="34" rx="4" fill="${x[2]}" tabindex="0" data-tip="${x[0]}: ${cr(x[1])} per year"/>
+    <text class="m" x="${x0+w+8}" y="${y+22}" font-size="13" style="fill:var(--ink)">${cr(x[1])}</text>`}).join('');
+}
+function renderStack(r){
+  const parts=[['Homes, top 7',r.tam.resi,'var(--s1)'],['Homes, Tier 2',r.tam.t2,'var(--f1)'],['Hotels, new-build',r.tam.hNew,'var(--s2)'],['Hotels, replacement',r.tam.hRep,'var(--s3)'],['PMAY partnership',r.tam.pmay,'var(--s4)']];
+  const tot=r.tam.total||1,W=540;let x=0;
+  $('#stack').innerHTML=parts.map(p=>{
+    const w=Math.max(0,p[1]/tot*W-2),s=`<rect x="${x}" y="24" width="${w}" height="36" rx="4" fill="${p[2]}" tabindex="0" data-tip="${p[0]}: ${cr(p[1])} (${fmt(p[1]/tot*100)}%)"/>`;
+    const lab=w>50?`<text class="m" x="${x+8}" y="47" font-size="12" style="fill:#fff">${fmt(p[1]/tot*100)}%</text>`:'';
+    x+=w+2;return s+lab}).join('')+`<text x="0" y="14" font-size="11">Total ${cr(tot)}</text>`;
+  $('#stackleg').innerHTML=parts.map(p=>`<span><i style="background:${p[2]}"></i>${p[0]} ${cr(p[1])}</span>`).join('');
+}
+function renderRev(r){
+  const yrs=['FY28','FY29','FY30','FY31','FY32'];
+  const planTot=PLAN.dev.map((v,i)=>v==null?null:v+PLAN.hot[i]+PLAN.atl[i]);
+  const max=nice(Math.max(...r.som.map(s=>s.t),...planTot.filter(v=>v!=null))*1.08),H=220,y0=250,x0=44,gw=96;
+  let out='';
+  for(let i=0;i<=4;i++){const v=max/4*i,y=y0-v/max*H;out+=`<line x1="${x0}" x2="550" y1="${y}" y2="${y}" stroke="var(--line)"/><text class="m" x="${x0-6}" y="${y+4}" font-size="10.5" text-anchor="end">${fmt(v,max<4?1:0)}</text>`}
+  out+=`<text x="0" y="12" font-size="11">₹ Cr per year, project channels</text>`;
+  yrs.forEach((yl,i)=>{
+    const gx=x0+16+i*(gw+6),bw=44;
+    const s=r.som[i],dh=s.d/max*H,hh=s.h/max*H,ah=s.a/max*H;
+    out+=`<rect x="${gx}" y="${y0-dh}" width="${bw}" height="${Math.max(dh-1,0)}" rx="3" fill="var(--s1)" tabindex="0" data-tip="${yl} developer kits: ${cr(s.d)}"/>`;
+    out+=`<rect x="${gx}" y="${y0-dh-hh}" width="${bw}" height="${Math.max(hh-1,0)}" rx="3" fill="var(--s2)" tabindex="0" data-tip="${yl} hotel kits: ${cr(s.h)}"/>`;
+    out+=`<rect x="${gx}" y="${y0-dh-hh-ah}" width="${bw}" height="${Math.max(ah-1,0)}" rx="3" fill="var(--s4)" tabindex="0" data-tip="${yl} Atelier: ${cr(s.a)}"/>`;
+    out+=`<text class="m" x="${gx+bw/2}" y="${y0-dh-hh-ah-5}" font-size="11" text-anchor="middle" style="fill:var(--ink)">${s.t.toFixed(1)}</text>`;
+    if(planTot[i]!=null){const ph=planTot[i]/max*H,px=gx+bw+5;
+      out+=`<rect x="${px}" y="${y0-ph}" width="${bw*0.75}" height="${ph}" rx="3" fill="var(--neutral)" tabindex="0" data-tip="${yl} GTM plan, project channels: ₹${planTot[i].toFixed(2)} Cr (developer ${PLAN.dev[i]}, hotels ${PLAN.hot[i]}, Atelier ${PLAN.atl[i]})"/>
+      <text class="m" x="${px+bw*0.375}" y="${y0-ph-5}" font-size="10.5" text-anchor="middle">${planTot[i].toFixed(1)}</text>`}
+    out+=`<text x="${gx+bw/2+(planTot[i]!=null?18:0)}" y="270" font-size="12" text-anchor="middle" style="fill:var(--ink)">${yl}</text>`;
+  });
+  out+=`<line x1="${x0}" x2="550" y1="${y0}" y2="${y0}" stroke="var(--muted)"/>`;
+  $('#rev').innerHTML=out;
+}
+function renderTables(r){
+  const t=r.tam;
+  $('#mt').innerHTML=`<tr><th>Layer</th><th class="n">₹ Cr per year</th></tr>
+  <tr><td>Homes, top 7 cities (blended ₹${fmt(r.blendR)} per bathroom)</td><td class="n">${fmt(t.resi,1)}</td></tr>
+  <tr><td>Homes, 15 Tier 2 cities</td><td class="n">${fmt(t.t2,1)}</td></tr>
+  <tr><td>Hotels, new-build (blended ₹${fmt(r.blendH)} per room)</td><td class="n">${fmt(t.hNew,1)}</td></tr>
+  <tr><td>Hotels, replacement</td><td class="n">${fmt(t.hRep,1)}</td></tr>
+  <tr><td>PMAY partnership housing</td><td class="n">${fmt(t.pmay,1)}</td></tr>
+  <tr><td><b>TAM</b></td><td class="n"><b>${fmt(t.total,1)}</b></td></tr>
+  <tr><td><b>SAM</b> (homes × ${fmt(r.eR*100)}%, hotels × ${S.eligH}%, PMAY × 100%)</td><td class="n"><b>${fmt(r.sam,1)}</b></td></tr>
+  <tr><td><b>SOM, FY30</b></td><td class="n"><b>${fmt(r.som[2].t,2)}</b></td></tr>`;
+  $('#rt').innerHTML=`<tr><th></th><th class="n">Developer kits</th><th class="n">Hotel kits</th><th class="n">Atelier</th><th class="n">Total</th><th class="n">Plan (project channels)</th><th class="n">Share of SAM</th></tr>`+
+   r.som.map((s,i)=>{const p=PLAN.dev[i]==null?'–':(PLAN.dev[i]+PLAN.hot[i]+PLAN.atl[i]).toFixed(2);return `<tr><td>FY${28+i}</td><td class="n">${fmt(s.d,2)}</td><td class="n">${fmt(s.h,2)}</td><td class="n">${fmt(s.a,2)}</td><td class="n"><b>${fmt(s.t,2)}</b></td><td class="n">${p}</td><td class="n">${fmt(s.t/r.sam*100,2)}%</td></tr>`}).join('');
+}
+function renderNumbers(){
+  const r=calc(S,cityOn);
+  syncSliders();
+  renderFunnel(r);renderStack(r);renderRev(r);renderTables(r);
+  const b=calc(BASE,Object.fromEntries(CITIES.map(c=>[c.id,true])));
+  $('#td3').textContent=fmt(b.tam.total);
+  $('#td4').textContent=fmt(11.49e9*88/1e7);
+}
+function mountGeo(){
+  $('#gc').innerHTML=CITIES.map(c=>`<button class="chip" data-c="${c.id}" aria-pressed="true">${c.name}</button>`).join('')+'<button class="chip" data-c="south" aria-pressed="false">South only</button>';
+  $('#gc').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.c;
+    if(k==='south'){CITIES.forEach(c=>cityOn[c.id]=['HYD','BLR','CHE'].includes(c.id))}
+    else cityOn[k]=!cityOn[k];
+    if(!Object.values(cityOn).some(Boolean))cityOn[k==='south'?'HYD':k]=true;
+    [...$('#gc').children].forEach(x=>{const id=x.dataset.c;if(id!=='south')x.setAttribute('aria-pressed',!!cityOn[id])});
+    renderNumbers();
+  });
+  $('#presets').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;Object.assign(S,JSON.parse(JSON.stringify(PRESETS[b.dataset.p])));
+    [...$('#presets').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderNumbers()});
+}
+
+/* ---------- answer ---------- */
+function renderAnswer(){
+  const b=calc(BASE,Object.fromEntries(CITIES.map(c=>[c.id,true])));
+  $('#k-tam').innerHTML=`${fmt(b.tam.total)}<small>₹ Cr</small>`;
+  $('#k-sam').innerHTML=`${fmt(b.sam)}<small>₹ Cr</small>`;
+  $('#k-som').innerHTML=`${fmt(b.som[2].t,1)}<small>₹ Cr</small>`;
+  $('#k-open').innerHTML=`25<small>of 27</small>`;
+  const hot=b.tam.hNew+b.tam.hRep;
+  const items=[
+   `<b>Homes are about ${fmt((b.tam.resi+b.tam.t2)/hot,0)} times larger than hotels in rupees.</b> The top 7 cities launched 4.19 lakh homes in 2025 and 3.47 lakh in the first nine months of 2026. At the base inputs that is ${cr(b.tam.resi)} a year of developer-fitted CP sets, plus ${cr(b.tam.t2)} in 15 Tier 2 cities, against ${cr(hot)} for branded hotel rooms including replacement.`,
+   `<b>The specification is open more often than not.</b> Of 27 developer spec sheets read, 19 say "or equivalent" (Brigade: "Jaquar/Ess Ess/Essco or equivalent"; Prestige Golden Grove, Hyderabad: "Kohler, Grohe, or equivalent"; Rajapushpa: "Jaquar or equivalent"), 6 name no brand, and 2 are fixed. The entry task is an equivalence approval with the architect and procurement together, not displacing a supply contract.`,
+   `<b>Every spec says chrome plated; none says polymer.</b> Incumbents put PTMT at the value end: Cera's Polipluz targets a ₹9,000 Cr unorganised tier-4 market through hardware stores, Truflo by Hindware frames it as Tier 2 and 3, and PTMT pioneer Prayag moved into brass to reach hotels. NuFlow's finish-led hybrid, IS marks and warranty are what make it specifiable.`,
+   `<b>Branded hotels already have suppliers on record.</b> Taj, Oberoi, Marriott and Radisson Blu Delhi reference Jaquar/Artize; Grand Hyatt Gurgaon is a TOTO project; Leela Kovalam is GROHE; Duravit lists IHCL, ITC, Hyatt, Marriott and Hilton for ceramics. Lemon Tree, Ginger, OYO, Treebo and Sarovar publish nothing: the owner-funded midscale segment is the opening, and 71% of 2025 signings were in Tier 2 and 3.`,
+   `<b>BirlaNu is already on the site.</b> 5,937 dealers, 90.7% of sales through them, 53 depots, 30 plants and 64,921 plumber and contractor meets in FY26. Named clients include DLF, M3M, Mahindra Lifespaces, Casagrand, Raheja, Appaswamy, L&T, Tata Projects, Shirke and Ahluwalia. A single plumbing spec (pipes, valves, fittings, chemicals) is the argument for seven phases in Year 1.`,
+   `<b>Projects are about 40% of organised faucet sales.</b> Cera reports 39% from projects and Jaquar about 40%; faucets are a ₹20,190 Cr market, 60% organised. That puts the all-India organised project pool near ₹4,850 Cr, and this explorer's TAM is the reachable slice of it: developer apartments in 22 cities, branded hotels and partnership housing.`,
+   `<b>FY30 project revenue of about ${cr(b.som[2].t)}</b> needs ${BASE.phases[2]} developer phases (${fmt(BASE.phases[2]*BASE.homesPer)} homes), ${BASE.hotels[2]} hotels and ${BASE.atelier[2]} Atelier capsules at the plan's kit prices. That is ${fmt(b.som[2].t/b.sam*100,1)}% of the specifiable pool, which is why the plan can lean on it without claiming share.`];
+  $('#finds').innerHTML=items.map(i=>`<li><div>${i}</div></li>`).join('');
+}
+
+/* ---------- market charts ---------- */
+function hbars(sel,rows,opts={}){
+  const W=560,lw=opts.lw||200,bw=W-lw-(opts.vr||70),rh=opts.rh||26,max=Math.max(...rows.map(r=>r[1]));
+  const h=rows.length*rh+10;
+  $(sel).setAttribute('viewBox',`0 0 ${W} ${h}`);
+  $(sel).innerHTML=rows.map((r,i)=>{const y=6+i*rh,w=Math.max(2,r[1]/max*bw);
+    return `<text x="${lw-8}" y="${y+rh/2+1}" font-size="12" text-anchor="end" style="fill:var(--ink)">${esc(r[0])}</text>
+    <rect x="${lw}" y="${y+4}" width="${w}" height="${rh-10}" rx="3" fill="${r[3]||'var(--s1)'}" tabindex="0" data-tip="${esc(r[0])}: ${r[2]||fmt(r[1])}"/>
+    <text class="m" x="${lw+w+6}" y="${y+rh/2+1}" font-size="11.5">${r[2]||fmt(r[1])}</text>`}).join('');
+}
+function renderMarket(){
+  hbars('#flowchart',[
+   ['PMAY-G rural, self-built',3554000,'35.5 lakh','var(--neutral)'],
+   ['Urban owner-builders (est.)',800000,'6–10 lakh','var(--neutral)'],
+   ['Developer launches, top 7',419170,'4.19 lakh','var(--s1)'],
+   ['PMAY-U partnership (AHP/ISSR)',180000,'≈1.8 lakh','var(--s4)'],
+   ['Developer launches, Tier 2 (15)',136243,'1.36 lakh','var(--f1)']],{lw:215,rh:32,vr:80});
+  /* entry chart: faucet demand by entry */
+  const parts=[['New build: developer projects',0.40*0.78,'var(--s1)'],['New build: self-build and contractors',0.60*0.78,'var(--neutral)'],['Replacement and renovation',0.22,'var(--s3)']];
+  const W=540;let x=0;
+  $('#entrychart').innerHTML=`<text x="0" y="14" font-size="11">Faucet demand ₹20,190 Cr (FY25), split by how it enters</text>`+parts.map(p=>{const w=p[1]*W-2,s=`<rect x="${x}" y="26" width="${w}" height="40" rx="4" fill="${p[2]}" tabindex="0" data-tip="${p[0]}: about ${fmt(p[1]*100)}% (≈${cr(p[1]*20190)})"/>`;const lab=w>80?`<text class="m" x="${x+8}" y="51" font-size="12" style="fill:#fff">${fmt(p[1]*100)}%</text>`:'';x+=w+2;return s+lab}).join('')+
+   `<text x="0" y="90" font-size="11">New build split by the ≈40% organised project share; replacement 20–25%.</text><text x="0" y="106" font-size="11">Derived and indicative, not a published split.</text>`;
+  hbars('#tierchart',[
+   ['Top 7 cities launches 2025',419170,'4.19 lakh (+2%)'],
+   ['Top 7, 9M 2026 annualised',462113,'4.62 lakh (+11%)','var(--f1)'],
+   ['15 Tier 2 cities launches 2025',136243,'1.36 lakh (−6%)','var(--s2)'],
+   ['Tier 2 sales 2025',156181,'1.56 lakh (−10%)','var(--s3)']],{lw:215,rh:32,vr:120});
+  hbars('#rerachart',[['Maharashtra',50162],['Tamil Nadu',27609],['Gujarat',15322],['Telangana (2023)',8227],['Other states',43297,'43,297 (balance)','var(--neutral)']],{lw:150,rh:32,vr:110});
+  /* band chart: stacked bars Q1,Q2,Q3 2026 */
+  const Q=[['Q1 2026',[10,13,25,32,20]],['Q2 2026',[6,19,27,25,22]],['Q3 2026',[14,17,34,24,11]]];
+  const cols=['var(--neutral)','var(--f1)','var(--s1)','var(--f3)','var(--s4)'],labs=['Below ₹40 L','₹40–80 L','₹80 L–1.5 Cr','₹1.5–2.5 Cr','Above ₹2.5 Cr'];
+  let o='';Q.forEach((q,i)=>{const y=14+i*52;let x=90;o+=`<text x="0" y="${y+24}" font-size="12.5" font-weight="600" style="fill:var(--ink)">${q[0]}</text>`;
+    q[1].forEach((v,j)=>{const w=v/100*450;o+=`<rect x="${x}" y="${y}" width="${Math.max(w-2,0)}" height="36" rx="3" fill="${cols[j]}" tabindex="0" data-tip="${q[0]} ${labs[j]}: ${v}% of launches"/>`;if(w>28)o+=`<text class="m" x="${x+w/2-1}" y="${y+23}" font-size="11.5" text-anchor="middle" style="fill:#fff">${v}</text>`;x+=w});});
+  $('#bandchart').innerHTML=o;
+  $('#bandleg').innerHTML=labs.map((l,j)=>`<span><i style="background:${cols[j]}"></i>${l}</span>`).join('');
+}
+
+/* ---------- channels ---------- */
+function renderChannels(){
+  $('#chtab').innerHTML='<tr><th>Channel</th><th>Share of market</th><th>Who decides</th><th>Price and margin structure</th><th>NuFlow use</th><th>Geography</th></tr>'+CHANNELS.map(r=>`<tr><td><b>${esc(r[0])}</b></td>${r.slice(1).map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+  hbars('#netchart',NETS.map(n=>[n[0],n[1],fmt(n[1])+' '+n[2],n[0].startsWith('BirlaNu')?'var(--s2)':'var(--s1)']),{lw:200,rh:34,vr:175});
+  const h=HEAT;let o=`<div class="hh"></div>`+h.brands.map(b=>`<div class="hh">${b}</div>`).join('');
+  h.regions.forEach((r,i)=>{o+=`<div class="hr">${r}</div>`+h.v[i].map((v,j)=>`<div class="hc h${v}" data-tip="${h.brands[j]} in ${r}: ${['weak','present','strong','leads'][v]}">${v}</div>`).join('')});
+  $('#heat').style.gridTemplateColumns=`minmax(96px,1.4fr) repeat(${h.brands.length},minmax(58px,1fr))`;$('#heat').innerHTML=o;
+}
+
+/* ---------- birlanu ---------- */
+function renderClients(){
+  $('#clienttab').innerHTML='<tr><th>Client</th><th>Segment</th><th>Where</th><th>NuFlow route</th></tr>'+CLIENTS.map(c=>`<tr><td><b>${esc(c[0])}</b></td><td>${esc(c[1])}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td></tr>`).join('');
+}
+
+/* ---------- personas ---------- */
+function renderPersonas(){
+  $('#personas').innerHTML=PERSONAS.map(p=>`<div class="persona"><h4>${esc(p.t)}</h4><p class="q">${esc(p.q)}</p><ul>${p.b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+}
+
+/* ---------- geography ---------- */
+function renderMap(){
+  const x=lon=>40+(lon-69)/(93-69)*560, y=lat=>30+(32-lat)/(32-8)*540;
+  const maxL=Math.max(...CITIES.map(c=>c.launch));
+  let o='';
+  for(let lon=70;lon<=92;lon+=2)o+=`<line x1="${x(lon)}" x2="${x(lon)}" y1="30" y2="570" stroke="var(--line)" stroke-dasharray="2 4"/>`;
+  for(let lat=10;lat<=32;lat+=2)o+=`<line x1="40" x2="600" y1="${y(lat)}" y2="${y(lat)}" stroke="var(--line)" stroke-dasharray="2 4"/>`;
+  TOWNS.forEach(t=>{const l=TLAB[t[0]]||[8,4,'start'];
+    o+=`<circle cx="${x(t[2])}" cy="${y(t[1])}" r="5.5" fill="none" stroke="var(--s2)" stroke-width="2" tabindex="0" data-tip="${esc(t[0])}: ${esc(t[3])}"/>
+    <text x="${x(t[2])+l[0]}" y="${y(t[1])+l[1]}" font-size="10.5" text-anchor="${l[2]}">${t[0]}</text>`});
+  [...CITIES].sort((a,b)=>b.launch-a.launch).forEach(c=>{
+    const r=Math.sqrt(c.launch/maxL)*34,cx=x(c.lon),cy=y(c.lat);
+    o+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="var(--s1)" fill-opacity=".82" stroke="var(--surface)" stroke-width="2" tabindex="0" data-tip="${c.name}: ${fmt(c.launch)} homes launched in 2025 (${c.yoy>0?'+':''}${c.yoy}% on 2024)"/>
+    <text x="${cx+c.dx}" y="${cy+c.dy}" font-size="12.5" font-weight="600" text-anchor="${c.a}" style="fill:var(--ink)">${c.name}</text>
+    <text class="m" x="${cx+c.dx}" y="${cy+c.dy+13}" font-size="10.5" text-anchor="${c.a}">${fmt(c.launch/1000,1)}k</text>`});
+  $('#map').innerHTML=o;
+}
+const CW=[['cv','Launch volume',30],['cf','Mid-price share',25],['ca','Listed-developer share',25],['cm','Launch momentum (2025)',20]];
+const CWV={cv:30,cf:25,ca:25,cm:20};
+function renderCities(){
+  const mm=(f)=>{const v=CITIES.map(f),lo=Math.min(...v),hi=Math.max(...v);return c=>(f(c)-lo)/(hi-lo)*100};
+  const nv=mm(c=>c.launch),nf=mm(c=>c.below),na=mm(c=>c.gradeA),nm=mm(c=>c.yoy);
+  const tw=Object.values(CWV).reduce((a,b)=>a+b,0)||1;
+  const rows=CITIES.map(c=>({c,s:(nv(c)*CWV.cv+nf(c)*CWV.cf+na(c)*CWV.ca+nm(c)*CWV.cm)/tw})).sort((a,b)=>b.s-a.s);
+  $('#ctab').innerHTML=`<tr><th>#</th><th>City</th><th class="n">Launches 2025</th><th class="n">vs 2024</th><th class="n">Sold 2025</th><th>Price mix of launches</th><th class="n">Listed share</th><th class="n">Score</th></tr>`+
+   rows.map((r,i)=>`<tr><td class="n">${i+1}</td><td><b>${r.c.name}</b></td><td class="n">${fmt(r.c.launch)}</td><td class="n">${r.c.yoy>0?'+':''}${r.c.yoy}%</td><td class="n">${fmt(r.c.sold)}</td><td>${r.c.ticket}</td><td class="n">${r.c.gradeA}%</td><td class="n"><b>${fmt(r.s)}</b></td></tr>`).join('');
+}
+function mountCityWeights(){
+  $('#cw').innerHTML=CW.map(c=>`<label class="sl" for="${c[0]}"><span>${c[1]}</span><input type="range" id="${c[0]}" min="0" max="50" step="5" value="${c[2]}"><output id="o_${c[0]}">${c[2]}</output></label>`).join('');
+  CW.forEach(c=>$('#'+c[0]).addEventListener('input',e=>{CWV[c[0]]=+e.target.value;$('#o_'+c[0]).textContent=e.target.value;renderCities()}));
+}
+
+/* ---------- partners ---------- */
+function mountPartnerControls(){
+  $('#wts').innerHTML=WCFG.map(c=>`<label class="sl" for="${c[0]}"><span>${c[1]}</span><input type="range" id="${c[0]}" min="0" max="50" step="5" value="${c[2]}"><output id="o_${c[0]}">${c[2]}</output></label>`).join('');
+  WCFG.forEach(c=>$('#'+c[0]).addEventListener('input',e=>{W[c[0]]=+e.target.value;$('#o_'+c[0]).textContent=e.target.value;renderPartners()}));
+  const opts=[['all','All'],['warm','Warm via BirlaNu'],['openspec','Open or unbranded spec']].concat(Object.entries(TYPES));
+  $('#pf').innerHTML=opts.map(o=>`<button class="chip" data-f="${o[0]}" aria-pressed="${o[0]==='all'}">${o[1]}</button>`).join('');
+  $('#pf').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;pfilter=b.dataset.f;[...$('#pf').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderPartners()});
+}
+function renderPartners(){
+  const tw=W.wv+W.wf+W.ws+W.wa+W.ww||1;
+  const list=PARTNERS.map(p=>({p,s:((p.sc[0]*W.wv+p.sc[1]*W.wf+p.sc[2]*W.ws+p.sc[3]*W.wa+p.sc[4]*W.ww)/tw)/5*100}))
+   .filter(x=>pfilter==='all'||(pfilter==='warm'&&x.p.warm)||(pfilter==='openspec'&&(x.p.spec.s==='open'||x.p.spec.s==='none'))||x.p.t===pfilter).sort((a,b)=>b.s-a.s);
+  $('#plist').innerHTML=list.map((x,i)=>{const p=x.p;return `<article class="pc${p.warm?' warm':''}"><div class="rk">${i+1}<small>${fmt(x.s)}/100</small></div><div>
+   <h3>${esc(p.n)}<span class="pill">${TYPES[p.t]}</span><span class="pill ${p.spec.s}">${SPECL[p.spec.s]}</span>${p.warm?'<span class="pill warm">Warm via BirlaNu</span>':''}</h3>
+   <div class="score"><div class="bar2" aria-hidden="true"><i style="width:${x.s}%"></i></div><div class="mini"><span>Volume ${p.sc[0]}</span><span>Fit ${p.sc[1]}</span><span>South ${p.sc[2]}</span><span>Access ${p.sc[3]}</span><span>Warmth ${p.sc[4]}</span></div></div>
+   <dl><dt>Scale</dt><dd>${esc(p.scale)}</dd><dt>Spec evidence</dt><dd>${esc(p.spec.txt)} <a href="${p.spec.u}" target="_blank" rel="noopener">source</a></dd><dt>Why</dt><dd>${esc(p.why)}</dd><dt>Entry</dt><dd>${esc(p.entry)}</dd><dt>Sources</dt><dd>${p.src.map(s=>`<a href="${s.u}" target="_blank" rel="noopener">${esc(s.t)}</a>`).join(' · ')}</dd></dl></div></article>`}).join('');
+}
+
+/* ---------- evidence ---------- */
+let ef='all';
+function mountEvidence(){
+  const o=[['all','All'],['src','Sourced'],['der','Derived'],['ass','Assumed'],['unv','Unverified']];
+  $('#ef').innerHTML=o.map(x=>`<button class="chip" data-f="${x[0]}" aria-pressed="${x[0]==='all'}">${x[1]}</button>`).join('');
+  $('#ef').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;ef=b.dataset.f;[...$('#ef').children].forEach(x=>x.setAttribute('aria-pressed',x===b));renderEvidence()});
+}
+function renderEvidence(){
+  $('#etab').innerHTML='<tr><th>Tag</th><th>Area</th><th>Fact</th><th>Source</th></tr>'+EV.filter(r=>ef==='all'||r[0]===ef).map(r=>`<tr><td><i class="tag ${r[0]}" style="margin:0">${TAGN[r[0]]}</i></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${r[4]==='#'?esc(r[3]):`<a href="${r[4]}" target="_blank" rel="noopener">${esc(r[3])}</a>`}</td></tr>`).join('');
+}
+
+/* ---------- boot ---------- */
+mountSliders();mountGeo();mountPartnerControls();mountCityWeights();mountEvidence();mountSlides();
+renderAnswer();renderNumbers();renderMarket();renderChannels();renderClients();renderPersonas();renderMap();renderCities();renderPartners();renderEvidence();route();
+</script></body></html>
